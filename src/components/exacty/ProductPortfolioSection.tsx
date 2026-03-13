@@ -228,17 +228,20 @@ const ProductPortfolioSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.72, ease: easeOut }}
-            className="mx-auto mb-12 max-w-4xl text-center md:mb-16"
+            className="mx-auto mb-12 max-w-6xl text-center md:mb-16"
           >
             <p className="mb-5 text-[11px] font-medium uppercase tracking-[0.28em] text-violet-200/70">
               PORTFÓLIO ESPECIALIZADO PARA ESTÉTICA AVANÇADA
             </p>
 
-            <h2 className="text-4xl font-semibold leading-[1.05] tracking-[-0.04em] text-zinc-50 sm:text-5xl md:text-6xl">
-              Explore o portfólio da Exacty Med
+            <h2 className="mx-auto max-w-6xl text-center text-4xl font-semibold leading-[1.05] tracking-[-0.04em] text-zinc-50 sm:text-5xl md:text-6xl lg:whitespace-nowrap">
+              <span className="text-zinc-50">Explore o portfólio da </span>
+              <span className="bg-[linear-gradient(180deg,#e9defd_0%,#d4b5ff_35%,#a855f7_68%,#7c3aed_100%)] bg-clip-text text-transparent">
+                Exacty Med
+              </span>
             </h2>
 
-            <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-zinc-400 sm:text-base">
+            <p className="mx-auto mt-5 max-w-5xl text-center text-sm leading-7 text-zinc-400 sm:text-base lg:whitespace-nowrap">
               Selecione uma categoria para visualizar detalhes do produto, elegibilidade profissional e informações
               técnicas.
             </p>
@@ -286,7 +289,7 @@ const ProductPortfolioSection = () => {
                       >
                         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),transparent_28%,rgba(0,0,0,0.34)_100%)]" />
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_22%,rgba(139,92,246,0.2),transparent_42%)]" />
-                        <div className="absolute inset-3 rounded-[26px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.01))]" />
+                        <div className="absolute inset-3 rounded-[26px] bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.01))]" />
                         <div
                           className={cn(
                             "absolute inset-0 rounded-[32px] transition-opacity duration-300",
