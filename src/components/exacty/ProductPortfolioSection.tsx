@@ -1,9 +1,9 @@
 import * as React from "react";
-import acido from "@/assets/acido-hialurônico.png";
-import bioestimulador from "@/assets/Bioestimuladores-de-colágeno.png";
+import acido from "@/assets/acido-hialuronico.png";
+import bioestimulador from "@/assets/bioestimuladores-de-colageno.png";
 import mockup from "@/assets/mockup.png";
 import soro from "@/assets/soro.png";
-import toxina from "@/assets/toxina-butolínica.png";
+import toxina from "@/assets/toxina-botulinica.png";
 import { Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";

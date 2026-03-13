@@ -1,7 +1,7 @@
-import acido from "@/assets/acido-hialurônico.png";
-import bioestimulador from "@/assets/Bioestimuladores-de-colágeno.png";
+import acido from "@/assets/acido-hialuronico.png";
+import bioestimulador from "@/assets/bioestimuladores-de-colageno.png";
 import mockup from "@/assets/mockup.png";
-import toxina from "@/assets/toxina-butolínica.png";
+import toxina from "@/assets/toxina-botulinica.png";
 import { motion } from "framer-motion";
 import { ArrowRight, Clock3, MapPin, ShieldCheck } from "lucide-react";
 import { getWhatsAppUrl } from "./WhatsAppLink";
