@@ -1,0 +1,11 @@
+node_modules
+dist
+.git
+.gitignore
+Dockerfile
+tmp
+npm-debug.log
+coverage
+playwright-report
+test-results
+.DS_Store
