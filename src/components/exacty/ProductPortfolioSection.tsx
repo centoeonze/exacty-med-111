@@ -1,6 +1,7 @@
 import * as React from "react";
 import acido from "@/assets/acido-hialuronico.png";
 import bioestimulador from "@/assets/bioestimuladores-de-colageno.png";
+import dermaPen from "@/assets/Derma Pen_v1.png";
 import mockup from "@/assets/mockup.png";
 import soro from "@/assets/soro.png";
 import toxina from "@/assets/toxina-botulinica.png";
@@ -114,6 +115,21 @@ const PORTFOLIO_ITEMS: PortfolioItem[] = [
       { label: "Categoria", value: "Equipamentos e acessórios para estética avançada" },
       { label: "Disponibilidade", value: "Consulte modelos e pronta-entrega" },
       { label: "Suporte", value: "Atendimento consultivo para seleção do portfólio" },
+    ],
+  },
+  {
+    title: "Derma Pen",
+    posterImage: dermaPen,
+    detailImage: dermaPen,
+    description:
+      "Equipamento estético para procedimentos minimamente invasivos com aplicação precisa e suporte consultivo especializado.",
+    canApply: ["Biomédicos", "Dentistas", "Médicos", "Esteticistas habilitados"],
+    canBuy: ["Clínicas", "Profissionais habilitados", "Pessoa jurídica da área"],
+    specs: [
+      { label: "Categoria", value: "Equipamentos estéticos" },
+      { label: "Aplicação", value: "Procedimentos faciais e protocolos estéticos" },
+      { label: "Disponibilidade", value: "Consulte estoque e versões disponíveis" },
+      { label: "Suporte", value: "Atendimento consultivo para escolha do equipamento" },
     ],
   },
 ];
