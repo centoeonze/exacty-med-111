@@ -1,18 +1,17 @@
 import * as React from "react";
 import estoqueImage from "@/assets/estoque.jpeg";
 import vanImage from "@/assets/van.png";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { motion, useAnimationControls, useInView, useReducedMotion } from "framer-motion";
 import { PackageCheck, ShieldCheck, Truck, Users } from "lucide-react";
 
 const HIGHLIGHTS = [
   { icon: PackageCheck, label: "Estoque disponível" },
-  { icon: Truck, label: "Entrega rápida na região" },
+  { icon: Truck, label: "Entrega em até 3hrs em Londrina, Cambé e Ibiporã" },
   { icon: Users, label: "Atendimento consultivo" },
   { icon: ShieldCheck, label: "Rastreabilidade total" },
 ];
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
-const MAX_VAN_SCROLL_OFFSET = 24;
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
 const AuthoritySectionExactyMed = () => {
@@ -20,38 +19,28 @@ const AuthoritySectionExactyMed = () => {
   const vanTrackRef = React.useRef<HTMLDivElement | null>(null);
   const vanRef = React.useRef<HTMLDivElement | null>(null);
   const stockVisualRef = React.useRef<HTMLDivElement | null>(null);
-  const vanX = useMotionValue(0);
-  const vanY = useMotionValue(0);
-  const smoothVanX = useSpring(vanX, {
-    stiffness: 130,
-    damping: 24,
-    mass: 1.72,
-  });
-  const smoothVanY = useSpring(vanY, {
-    stiffness: 120,
-    damping: 26,
-    mass: 0.74,
-  });
+  const hasAnimatedRef = React.useRef(false);
+  const controls = useAnimationControls();
+  const prefersReducedMotion = useReducedMotion();
+  const isSectionInView = useInView(sectionRef, { once: true, amount: 0.35 });
+  const [vanBounds, setVanBounds] = React.useState({ startX: 0, endX: 0 });
 
   React.useEffect(() => {
-    const sectionElement = sectionRef.current;
     const trackElement = vanTrackRef.current;
     const vanElement = vanRef.current;
     const stockElement = stockVisualRef.current;
 
-    if (!sectionElement || !trackElement || !vanElement || !stockElement) {
+    if (!trackElement || !vanElement || !stockElement) {
       return;
     }
 
     let frameId = 0;
 
-    const updateVanPosition = () => {
+    const updateVanBounds = () => {
       frameId = 0;
 
-      const rect = sectionElement.getBoundingClientRect();
       const trackRect = trackElement.getBoundingClientRect();
       const stockRect = stockElement.getBoundingClientRect();
-      const viewportHeight = window.innerHeight || 1;
       const trackWidth = trackRect.width;
       const vanWidth = vanElement.offsetWidth;
 
@@ -59,39 +48,88 @@ const AuthoritySectionExactyMed = () => {
         return;
       }
 
-      const progress = clamp((viewportHeight - rect.top) / (viewportHeight + rect.height), 0, 1);
-      const startX = -vanWidth * 0.94;
-      const desiredEndX = stockRect.right - trackRect.left - vanWidth * 0.88;
-      const endX = clamp(desiredEndX, startX, trackWidth - vanWidth - 10);
+      const isMobile = window.innerWidth < 768;
+      const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024;
+      const startX = -vanWidth * 1.2;
+      const targetRatio = isMobile ? 0.5 : isTablet ? 0.56 : 0.62;
+      const desiredEndX = stockRect.left - trackRect.left + stockRect.width * targetRatio - vanWidth * 0.5;
+      const edgePadding = isMobile ? 12 : isTablet ? 24 : 36;
+      const endX = clamp(desiredEndX, startX, trackWidth - vanWidth - edgePadding);
 
-      vanX.set(startX + (endX - startX) * progress);
-      vanY.set(progress * MAX_VAN_SCROLL_OFFSET);
+      setVanBounds((currentBounds) => {
+        if (currentBounds.startX === startX && currentBounds.endX === endX) {
+          return currentBounds;
+        }
+
+        return { startX, endX };
+      });
     };
 
-    const handleScroll = () => {
+    const requestUpdate = () => {
       if (frameId) {
         return;
       }
 
-      frameId = window.requestAnimationFrame(updateVanPosition);
+      frameId = window.requestAnimationFrame(updateVanBounds);
     };
 
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("resize", handleScroll);
+    requestUpdate();
+    window.addEventListener("resize", requestUpdate);
+
+    const resizeObserver = typeof ResizeObserver !== "undefined" ? new ResizeObserver(requestUpdate) : null;
+
+    resizeObserver?.observe(trackElement);
+    resizeObserver?.observe(stockElement);
+    resizeObserver?.observe(vanElement);
 
     return () => {
       if (frameId) {
         window.cancelAnimationFrame(frameId);
       }
 
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleScroll);
+      resizeObserver?.disconnect();
+      window.removeEventListener("resize", requestUpdate);
     };
   }, []);
 
+  React.useEffect(() => {
+    if (vanBounds.startX === vanBounds.endX) {
+      return;
+    }
+
+    if (!isSectionInView) {
+      controls.set({ x: vanBounds.startX });
+      return;
+    }
+
+    if (prefersReducedMotion) {
+      hasAnimatedRef.current = true;
+      controls.set({ x: vanBounds.endX });
+      return;
+    }
+
+    if (!hasAnimatedRef.current) {
+      hasAnimatedRef.current = true;
+      controls.set({ x: vanBounds.startX });
+      void controls.start({
+        x: vanBounds.endX,
+        transition: {
+          duration: 2.8,
+          ease: easeOut,
+        },
+      });
+      return;
+    }
+
+    controls.set({ x: vanBounds.endX });
+  }, [controls, isSectionInView, prefersReducedMotion, vanBounds.endX, vanBounds.startX]);
+
   return (
-    <section ref={sectionRef} id="sobre" className="relative overflow-hidden bg-[#07050D] py-20 md:py-24 lg:py-28">
+    <section
+      ref={sectionRef}
+      id="sobre"
+      className="relative overflow-hidden bg-[#07050D] pt-20 pb-28 md:pt-24 md:pb-32 lg:pt-28 lg:pb-36"
+    >
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(4,2,10,0.95),rgba(7,5,13,1))]" />
         <div className="absolute left-1/2 top-16 h-[360px] w-[360px] -translate-x-1/2 rounded-full bg-violet-600/15 blur-[130px]" />
@@ -100,32 +138,30 @@ const AuthoritySectionExactyMed = () => {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.04)_0,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[length:20px_20px] opacity-[0.03]" />
       </div>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-[94px] z-[24] hidden lg:block">
-        <div className="mx-auto max-w-7xl px-6 md:px-8">
-          <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-        </div>
-      </div>
-
-      <div className="pointer-events-none absolute inset-x-0 bottom-[90px] z-[30] hidden lg:block">
-        <div className="mx-auto max-w-7xl px-6 md:px-8">
-          <div
-            ref={vanTrackRef}
-            className="relative h-[150px] xl:h-[160px]"
-          >
-            <motion.div
-              ref={vanRef}
-              className="absolute bottom-0 left-0 will-change-transform"
-              style={{ x: smoothVanX, y: smoothVanY }}
-            >
-              <div className="absolute inset-x-10 bottom-4 h-8 rounded-full bg-violet-500/10 blur-[24px]" />
-              <img
-                src={vanImage}
-                alt=""
-                aria-hidden="true"
-                className="relative z-10 h-[143px] w-[322px] object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.35)] xl:h-[152px] xl:w-[343px]"
-              />
-            </motion.div>
+      <div className="pointer-events-none absolute inset-x-0 bottom-4 z-[16] md:bottom-6 lg:bottom-8">
+        <div
+          ref={vanTrackRef}
+          className="relative h-[88px] sm:h-[96px] md:h-[108px] lg:h-[118px] xl:h-[126px]"
+        >
+          <div className="absolute inset-x-0 bottom-4 sm:bottom-5 md:bottom-6 lg:bottom-7">
+            <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-gradient-to-r from-transparent via-white/12 to-transparent" />
+            <div className="absolute inset-x-0 top-1/2 h-8 -translate-y-1/2 bg-[linear-gradient(90deg,rgba(124,58,237,0),rgba(124,58,237,0.14),rgba(124,58,237,0))] blur-[28px]" />
           </div>
+
+          <motion.div
+            ref={vanRef}
+            className="absolute bottom-0 left-0 will-change-transform pointer-events-none select-none"
+            initial={{ x: -240 }}
+            animate={controls}
+          >
+            <div className="absolute inset-x-2 bottom-2 h-4 rounded-full bg-black/35 blur-[16px] sm:inset-x-4 sm:h-5 md:bottom-3 md:h-6" />
+            <img
+              src={vanImage}
+              alt=""
+              aria-hidden="true"
+              className="relative z-10 w-[110px] object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.35)] sm:w-[122px] md:w-[140px] lg:w-[180px]"
+            />
+          </motion.div>
         </div>
       </div>
 
@@ -150,7 +186,7 @@ const AuthoritySectionExactyMed = () => {
             </h2>
 
             <p className="mt-4 max-w-2xl text-[15px] leading-7 text-zinc-400">
-              Procedência, armazenamento e prazo - tudo sob controle para a sua clínica.
+              Procedência, armazenamento e prazo: tudo sob controle para a sua clínica.
             </p>
 
             <p className="mt-6 max-w-2xl text-[15px] leading-7 text-zinc-400">
