@@ -88,19 +88,21 @@ const TRUST_ITEMS = [
 const TrustSectionExactyMed = () => (
   <section
     id="confianca"
-    className="relative overflow-hidden bg-[#07050D] py-24 md:py-28 lg:py-32"
+    className="exacty-section-blend relative overflow-hidden bg-transparent py-24 md:py-28 lg:py-32"
   >
     <div className="pointer-events-none absolute inset-0">
-      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(4,2,10,0.96),rgba(7,5,13,1))]" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,5,13,0.74)_0%,rgba(11,7,18,0.48)_40%,rgba(7,5,13,0.72)_100%)]" />
       <div className="absolute left-1/2 top-10 h-[320px] w-[320px] -translate-x-1/2 rounded-full bg-violet-600/15 blur-[120px] md:h-[420px] md:w-[420px] md:blur-[150px]" />
       <div className="absolute left-1/2 top-[26%] h-[440px] w-[760px] -translate-x-1/2 rounded-full bg-purple-500/10 blur-[180px]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(139,92,246,0.14),transparent_34%)]" />
+      <div className="absolute inset-x-0 -top-16 h-44 bg-[linear-gradient(180deg,rgba(7,5,13,0.5),rgba(16,10,25,0.16)_58%,transparent)] blur-[14px]" />
+      <div className="absolute inset-x-0 -bottom-20 h-52 bg-[linear-gradient(0deg,rgba(7,5,13,0.56),rgba(16,10,25,0.18)_52%,transparent)] blur-[18px]" />
+      <div className="absolute left-1/2 bottom-0 h-28 w-[min(880px,88vw)] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(118,74,224,0.08),rgba(118,74,224,0.02)_46%,transparent_74%)] blur-[48px]" />
       <div className="absolute inset-0 opacity-[0.08] [background-image:radial-gradient(rgba(255,255,255,0.32)_0.8px,transparent_0.8px)] [background-size:28px_28px]" />
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-300/20 to-transparent" />
     </div>
 
     <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-8">
-      <div className="mx-auto mb-14 max-w-5xl text-center md:mb-16 lg:mb-20">
+      <div className="mx-auto mb-14 max-w-5xl overflow-visible text-center md:mb-16 lg:mb-20">
         <p className="relative mx-auto mb-7 w-fit max-w-full overflow-hidden rounded-full border border-white/12 bg-white/[0.045] px-5 py-2 text-[10px] font-medium uppercase tracking-[0.24em] text-zinc-300/80 shadow-[0_10px_35px_rgba(0,0,0,0.22)] backdrop-blur-2xl sm:px-6 sm:py-2.5 sm:text-[11px] md:px-7 md:py-3">
           <span className="pointer-events-none absolute inset-0 rounded-full bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(255,255,255,0.04)_36%,rgba(255,255,255,0.02)_100%)]" />
           <span className="pointer-events-none absolute inset-[1px] rounded-full bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.10),transparent_58%)] opacity-80" />
@@ -111,8 +113,8 @@ const TrustSectionExactyMed = () => (
           </span>
         </p>
 
-        <h2 className="mx-auto max-w-4xl text-center text-4xl font-semibold leading-[1.05] tracking-[-0.045em] text-zinc-50 sm:text-5xl md:text-6xl lg:text-[68px]">
-          <span className="inline-block bg-[linear-gradient(180deg,#e9defd_0%,#c8a9ff_46%,#8b5cf6_100%)] bg-clip-text text-transparent [-webkit-text-fill-color:transparent]">
+        <h2 className="mx-auto max-w-4xl overflow-visible pb-[0.04em] text-center text-4xl font-semibold leading-[1.11] tracking-[-0.045em] text-zinc-50 sm:text-5xl md:text-6xl lg:text-[68px]">
+          <span className="inline-block overflow-visible pb-[0.08em] bg-[linear-gradient(180deg,#e9defd_0%,#c8a9ff_46%,#8b5cf6_100%)] bg-clip-text text-transparent [-webkit-text-fill-color:transparent]">
             Segurança operacional
           </span>
           <br className="hidden md:block" />
@@ -135,16 +137,16 @@ const TrustSectionExactyMed = () => (
               <span className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.07),transparent_28%,transparent_100%)] opacity-70" />
               <span className="pointer-events-none absolute -top-12 left-1/2 h-28 w-28 -translate-x-1/2 rounded-full bg-violet-500/10 blur-3xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-              <div className="relative z-10">
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-violet-400/20 bg-violet-500/10 text-violet-300 shadow-[0_0_30px_rgba(139,92,246,0.12)]">
+              <div className="relative z-10 flex h-full flex-col">
+                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-violet-400/20 bg-violet-500/10 text-violet-300 shadow-[0_0_30px_rgba(139,92,246,0.12)]">
                   {item.icon}
                 </div>
 
-                <h3 className="mb-4 text-2xl font-semibold leading-[1.15] tracking-[-0.03em] text-zinc-100">
+                <h3 className="min-h-[3.45rem] text-2xl font-semibold leading-[1.08] tracking-[-0.03em] text-zinc-100">
                   {item.title}
                 </h3>
 
-                <p className="text-base leading-8 text-zinc-400">
+                <p className="mt-2 text-[0.98rem] leading-6 text-zinc-400">
                   {item.desc}
                 </p>
               </div>

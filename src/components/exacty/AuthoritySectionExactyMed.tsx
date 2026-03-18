@@ -1,7 +1,7 @@
 import * as React from "react";
 import estoqueImage from "@/assets/estoque.jpeg";
 import vanImage from "@/assets/van.png";
-import { motion, useAnimationControls, useInView, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
 import { PackageCheck, ShieldCheck, Truck, Users } from "lucide-react";
 
 const HIGHLIGHTS = [
@@ -19,11 +19,14 @@ const AuthoritySectionExactyMed = () => {
   const vanTrackRef = React.useRef<HTMLDivElement | null>(null);
   const vanRef = React.useRef<HTMLDivElement | null>(null);
   const stockVisualRef = React.useRef<HTMLDivElement | null>(null);
-  const hasAnimatedRef = React.useRef(false);
-  const controls = useAnimationControls();
   const prefersReducedMotion = useReducedMotion();
-  const isSectionInView = useInView(sectionRef, { once: true, amount: 0.35 });
-  const [vanBounds, setVanBounds] = React.useState({ startX: 0, endX: 0 });
+  const [vanBounds, setVanBounds] = React.useState({ startX: -240, endX: -240 });
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  const rawVanX = useTransform(scrollYProgress, [0, 1], [vanBounds.startX, vanBounds.endX], { clamp: true });
+  const vanX = useSpring(rawVanX, prefersReducedMotion ? { stiffness: 1000, damping: 1000 } : { stiffness: 180, damping: 30, mass: 0.45 });
 
   React.useEffect(() => {
     const trackElement = vanTrackRef.current;
@@ -92,49 +95,20 @@ const AuthoritySectionExactyMed = () => {
     };
   }, []);
 
-  React.useEffect(() => {
-    if (vanBounds.startX === vanBounds.endX) {
-      return;
-    }
-
-    if (!isSectionInView) {
-      controls.set({ x: vanBounds.startX });
-      return;
-    }
-
-    if (prefersReducedMotion) {
-      hasAnimatedRef.current = true;
-      controls.set({ x: vanBounds.endX });
-      return;
-    }
-
-    if (!hasAnimatedRef.current) {
-      hasAnimatedRef.current = true;
-      controls.set({ x: vanBounds.startX });
-      void controls.start({
-        x: vanBounds.endX,
-        transition: {
-          duration: 2.8,
-          ease: easeOut,
-        },
-      });
-      return;
-    }
-
-    controls.set({ x: vanBounds.endX });
-  }, [controls, isSectionInView, prefersReducedMotion, vanBounds.endX, vanBounds.startX]);
-
   return (
     <section
       ref={sectionRef}
       id="sobre"
-      className="relative overflow-hidden bg-[#07050D] pt-20 pb-28 md:pt-24 md:pb-32 lg:pt-28 lg:pb-36"
+      className="exacty-section-blend relative overflow-hidden bg-transparent pt-20 pb-28 md:pt-24 md:pb-32 lg:pt-28 lg:pb-36"
     >
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(4,2,10,0.95),rgba(7,5,13,1))]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,5,13,0.72)_0%,rgba(11,7,18,0.44)_40%,rgba(7,5,13,0.72)_100%)]" />
         <div className="absolute left-1/2 top-16 h-[360px] w-[360px] -translate-x-1/2 rounded-full bg-violet-600/15 blur-[130px]" />
         <div className="absolute left-1/2 top-1/3 h-[520px] w-[820px] -translate-x-1/2 rounded-full bg-purple-500/10 blur-[180px]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(139,92,246,0.14),transparent_34%)]" />
+        <div className="absolute inset-x-0 -top-16 h-44 bg-[linear-gradient(180deg,rgba(7,5,13,0.48),rgba(15,10,24,0.14)_60%,transparent)] blur-[14px]" />
+        <div className="absolute inset-x-0 -bottom-20 h-52 bg-[linear-gradient(0deg,rgba(7,5,13,0.54),rgba(15,10,24,0.18)_52%,transparent)] blur-[18px]" />
+        <div className="absolute left-1/2 bottom-0 h-28 w-[min(920px,90vw)] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(122,78,228,0.08),rgba(122,78,228,0.02)_48%,transparent_76%)] blur-[50px]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.04)_0,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[length:20px_20px] opacity-[0.03]" />
       </div>
 
@@ -151,8 +125,7 @@ const AuthoritySectionExactyMed = () => {
           <motion.div
             ref={vanRef}
             className="absolute bottom-0 left-0 will-change-transform pointer-events-none select-none"
-            initial={{ x: -240 }}
-            animate={controls}
+            style={{ x: vanX }}
           >
             <div className="absolute inset-x-2 bottom-2 h-4 rounded-full bg-black/35 blur-[16px] sm:inset-x-4 sm:h-5 md:bottom-3 md:h-6" />
             <img

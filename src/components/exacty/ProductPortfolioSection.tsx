@@ -2,7 +2,9 @@ import * as React from "react";
 import acido from "@/assets/acido-hialuronico.png";
 import bioestimulador from "@/assets/bioestimuladores-de-colageno.png";
 import dermaPen from "@/assets/Derma Pen_v1.png";
-import mockup from "@/assets/mockup.png";
+import dermaRoller from "@/assets/dermaroller1.png";
+import fiosDePdo from "@/assets/fiosdepdo1.png";
+import skinVibra from "@/assets/skinvibra.png";
 import soro from "@/assets/soro.png";
 import toxina from "@/assets/toxina-botulinica.png";
 import { Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
@@ -18,8 +20,7 @@ type ProductSpec = {
 
 type PortfolioItem = {
   title: string;
-  posterImage: string;
-  detailImage: string;
+  image: string;
   description: string;
   canApply: string[];
   canBuy: string[];
@@ -29,8 +30,7 @@ type PortfolioItem = {
 const PORTFOLIO_ITEMS: PortfolioItem[] = [
   {
     title: "Toxina Botulínica",
-    posterImage: toxina,
-    detailImage: toxina,
+    image: toxina,
     description:
       "Soluções para harmonização facial com procedência, rastreabilidade e suporte consultivo para rotinas clínicas que exigem conservação rigorosa.",
     canApply: ["Biomédicos", "Dentistas", "Médicos"],
@@ -44,8 +44,7 @@ const PORTFOLIO_ITEMS: PortfolioItem[] = [
   },
   {
     title: "Preenchedores de Ácido Hialurônico",
-    posterImage: acido,
-    detailImage: acido,
+    image: acido,
     description:
       "Linhas para volumização, contorno e refinamento facial com procedência homologada e apoio comercial para escolha da melhor apresentação.",
     canApply: ["Biomédicos", "Dentistas", "Médicos"],
@@ -59,8 +58,7 @@ const PORTFOLIO_ITEMS: PortfolioItem[] = [
   },
   {
     title: "Bioestimuladores de Colágeno",
-    posterImage: bioestimulador,
-    detailImage: bioestimulador,
+    image: bioestimulador,
     description:
       "Portfólio voltado para protocolos de firmeza e estímulo dérmico, com rastreabilidade completa e suporte consultivo para planejamento clínico.",
     canApply: ["Biomédicos", "Dentistas", "Médicos"],
@@ -74,8 +72,7 @@ const PORTFOLIO_ITEMS: PortfolioItem[] = [
   },
   {
     title: "Fios de PDO",
-    posterImage: mockup,
-    detailImage: mockup,
+    image: fiosDePdo,
     description:
       "Fios para sustentação e estímulo tecidual com atendimento consultivo para protocolos avançados e disponibilidade alinhada à agenda da clínica.",
     canApply: ["Biomédicos", "Dentistas", "Médicos"],
@@ -88,24 +85,22 @@ const PORTFOLIO_ITEMS: PortfolioItem[] = [
     ],
   },
   {
-    title: "Insumos Descartáveis",
-    posterImage: soro,
-    detailImage: soro,
+    title: "Soro Fisiológico",
+    image: soro,
     description:
-      "Materiais de apoio para procedimentos estéticos com logística ágil, padronização de fornecimento e reposição para o dia a dia da clínica.",
+      "Soro fisiológico para apoio a procedimentos estéticos e clínicos, com disponibilidade alinhada à rotina da clínica e atendimento consultivo para reposição ágil.",
     canApply: ["Biomédicos", "Dentistas", "Enfermeiros", "Médicos"],
     canBuy: ["Clínicas", "Consultórios", "Pessoa jurídica da área"],
     specs: [
       { label: "Aplicação", value: "Apoio a procedimentos clínicos e estéticos" },
       { label: "Disponibilidade", value: "Reposição recorrente conforme demanda" },
       { label: "Armazenamento", value: "Organização e logística para uso imediato" },
-      { label: "Categoria", value: "Materiais descartáveis para rotina profissional" },
+      { label: "Categoria", value: "Soro fisiológico para rotina profissional" },
     ],
   },
   {
     title: "Equipamentos Estéticos",
-    posterImage: mockup,
-    detailImage: mockup,
+    image: dermaRoller,
     description:
       "Equipamentos e acessórios para complementar protocolos com atendimento consultivo, orientação comercial e curadoria alinhada ao perfil da clínica.",
     canApply: ["Biomédicos", "Dentistas", "Esteticistas", "Médicos"],
@@ -119,8 +114,7 @@ const PORTFOLIO_ITEMS: PortfolioItem[] = [
   },
   {
     title: "Derma Pen",
-    posterImage: dermaPen,
-    detailImage: dermaPen,
+    image: dermaPen,
     description:
       "Equipamento estético para procedimentos minimamente invasivos com aplicação precisa e suporte consultivo especializado.",
     canApply: ["Biomédicos", "Dentistas", "Médicos", "Esteticistas habilitados"],
@@ -130,6 +124,20 @@ const PORTFOLIO_ITEMS: PortfolioItem[] = [
       { label: "Aplicação", value: "Procedimentos faciais e protocolos estéticos" },
       { label: "Disponibilidade", value: "Consulte estoque e versões disponíveis" },
       { label: "Suporte", value: "Atendimento consultivo para escolha do equipamento" },
+    ],
+  },
+  {
+    title: "SkinVibra",
+    image: skinVibra,
+    description:
+      "Equipamento estético para protocolos faciais com suporte consultivo, curadoria comercial e disponibilidade alinhada à rotina da clínica.",
+    canApply: ["Biomédicos", "Dentistas", "Médicos", "Esteticistas habilitados"],
+    canBuy: ["Clínicas", "Profissionais habilitados", "Pessoa jurídica da área"],
+    specs: [
+      { label: "Categoria", value: "Equipamentos estéticos" },
+      { label: "Aplicação", value: "Protocolos faciais e complementação de rotinas estéticas" },
+      { label: "Disponibilidade", value: "Consulte estoque e pronta-entrega" },
+      { label: "Suporte", value: "Atendimento consultivo para seleção do equipamento" },
     ],
   },
 ];
@@ -228,14 +236,17 @@ const ProductPortfolioSection = () => {
 
   return (
     <>
-      <section id="produtos" className="relative overflow-hidden bg-[#07050D] py-24 md:py-28 lg:py-32">
+      <section id="produtos" className="exacty-section-blend relative overflow-hidden bg-transparent py-24 md:py-28 lg:py-32">
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(4,2,10,0.95),rgba(7,5,13,1))]" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,5,13,0.72)_0%,rgba(11,7,18,0.44)_38%,rgba(7,5,13,0.72)_100%)]" />
           <div className="absolute left-1/2 top-16 h-[360px] w-[360px] -translate-x-1/2 rounded-full bg-violet-600/18 blur-[130px]" />
           <div className="absolute left-1/2 top-1/3 h-[520px] w-[820px] -translate-x-1/2 rounded-full bg-purple-500/10 blur-[180px]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(139,92,246,0.16),transparent_34%)]" />
+          <div className="absolute inset-x-0 -top-16 h-44 bg-[linear-gradient(180deg,rgba(7,5,13,0.48),rgba(15,10,24,0.14)_60%,transparent)] blur-[14px]" />
+          <div className="absolute inset-x-0 -bottom-20 h-52 bg-[linear-gradient(0deg,rgba(7,5,13,0.54),rgba(15,10,24,0.18)_52%,transparent)] blur-[18px]" />
+          <div className="absolute left-1/2 bottom-0 h-28 w-[min(920px,90vw)] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(122,78,228,0.08),rgba(122,78,228,0.02)_48%,transparent_76%)] blur-[50px]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.04)_0,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[length:18px_18px] opacity-[0.035]" />
-          <div className="absolute inset-x-0 bottom-0 h-36 bg-[linear-gradient(to_top,rgba(7,5,13,0.94),transparent)]" />
+          <div className="absolute inset-x-0 bottom-0 h-36 bg-[linear-gradient(to_top,rgba(7,5,13,0.62),transparent)]" />
         </div>
 
         <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-8">
@@ -316,7 +327,7 @@ const ProductPortfolioSection = () => {
                         />
 
                         <img
-                          src={item.posterImage}
+                          src={item.image}
                           alt={item.title}
                           className="relative z-10 h-full w-full object-contain px-6 py-8 transition-transform duration-500 group-hover:scale-[1.03]"
                         />
@@ -391,7 +402,7 @@ const ProductPortfolioSection = () => {
                     <div className="relative flex min-h-[340px] items-center justify-center rounded-[28px] border border-white/10 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.12),rgba(255,255,255,0.02)_42%,transparent_70%)] p-6 md:min-h-[420px]">
                       <div className="absolute inset-0 rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.05),transparent_35%,transparent_100%)]" />
                       <img
-                        src={selectedItem.detailImage}
+                        src={selectedItem.image}
                         alt={selectedItem.title}
                         className="relative z-10 max-h-[320px] w-full object-contain md:max-h-[380px]"
                       />
