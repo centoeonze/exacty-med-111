@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -241,7 +241,7 @@
   .hero-copy-backdrop {
     border-radius: 999px;
     background: radial-gradient(circle, rgba(111, 60, 207, 0.24), rgba(111, 60, 207, 0.08) 40%, transparent 72%);
-    filter: blur(30px);
+    filter: blur(24px);
     opacity: 0.88;
   }
 
@@ -250,8 +250,8 @@
     border-radius: 999px;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(28, 20, 42, 0.24));
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 30px rgba(110, 70, 255, 0.1);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     color: rgba(255, 255, 255, 0.76);
     font-size: 0.7rem;
     font-weight: 600;
@@ -289,8 +289,8 @@
     border-radius: 999px;
     border: 1px solid rgba(255, 255, 255, 0.15);
     transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease, background 0.35s ease;
-    backdrop-filter: blur(28px);
-    -webkit-backdrop-filter: blur(28px);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
   }
 
   .hero-cta-primary {
@@ -332,8 +332,8 @@
     background: linear-gradient(135deg, rgba(16, 12, 24, 0.8), rgba(18, 13, 30, 0.54));
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 22px 80px rgba(1, 0, 3, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(28px);
-    -webkit-backdrop-filter: blur(28px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
 
   .hero-navbar-shell {
@@ -382,8 +382,8 @@
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.03));
     color: white;
     transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
   }
 
   .hero-menu-button:hover {
@@ -415,8 +415,8 @@
     animation: float 6s ease-in-out infinite;
   }
 
-  .animate-pulse-glow {
-    animation: pulseGlow 3s ease-in-out infinite;
+  .animate-whatsapp-float {
+    animation: whatsappFloat 3.2s ease-in-out infinite;
   }
 
   .testimonials-marquee-row {
@@ -474,9 +474,13 @@
   50% { transform: translateY(-12px); }
 }
 
-@keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 20px hsla(270, 60%, 65%, 0.15); }
-  50% { box-shadow: 0 0 40px hsla(270, 60%, 65%, 0.3); }
+@keyframes whatsappFloat {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -3px, 0) scale(1.04);
+  }
 }
 
 @keyframes testimonialsMarquee {
@@ -489,6 +493,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .animate-whatsapp-float,
   .testimonials-marquee-row {
     animation: none;
   }

@@ -1,157 +1,90 @@
 import * as React from "react";
-import acido from "@/assets/acido-hialuronico.png";
-import bioestimulador from "@/assets/bioestimuladores-de-colageno.png";
-import dermaPen from "@/assets/Derma Pen_v1.png";
-import dermaRoller from "@/assets/dermaroller1.png";
-import fiosDePdo from "@/assets/fiosdepdo1.png";
-import skinVibra from "@/assets/skinvibra.png";
-import soro from "@/assets/soro.png";
-import toxina from "@/assets/toxina-botulinica.png";
 import { Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
-import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, ShieldCheck, UserRound, X } from "lucide-react";
-import { getWhatsAppUrl } from "./WhatsAppLink";
+import { motion, useInView } from "framer-motion";
+import { AUTOPLAY_DELAY, PORTFOLIO_ITEMS, type PortfolioItem } from "./productPortfolioData";
 
-type ProductSpec = {
-  label: string;
-  value: string;
-};
-
-type PortfolioItem = {
-  title: string;
-  image: string;
-  description: string;
-  canApply: string[];
-  canBuy: string[];
-  specs: ProductSpec[];
-};
-
-const PORTFOLIO_ITEMS: PortfolioItem[] = [
-  {
-    title: "Toxina Botulínica",
-    image: toxina,
-    description:
-      "Soluções para harmonização facial com procedência, rastreabilidade e suporte consultivo para rotinas clínicas que exigem conservação rigorosa.",
-    canApply: ["Biomédicos", "Dentistas", "Médicos"],
-    canBuy: ["Clínicas", "Profissionais habilitados", "Pessoa jurídica da área"],
-    specs: [
-      { label: "Marcas", value: "Nabota, Botulim, Botox, Botulift" },
-      { label: "Armazenamento", value: "Controle rigoroso de temperatura" },
-      { label: "Disponibilidade", value: "Consulte estoque e lote" },
-      { label: "Categoria", value: "Injetáveis para estética avançada" },
-    ],
-  },
-  {
-    title: "Preenchedores de Ácido Hialurônico",
-    image: acido,
-    description:
-      "Linhas para volumização, contorno e refinamento facial com procedência homologada e apoio comercial para escolha da melhor apresentação.",
-    canApply: ["Biomédicos", "Dentistas", "Médicos"],
-    canBuy: ["Clínicas", "Profissionais habilitados", "Pessoa jurídica da área"],
-    specs: [
-      { label: "Marcas", value: "Rennova, Saypha, Finahfil, E.P.T.Q., Biogelis" },
-      { label: "Apresentação", value: "Protocolos para volumização e refinamento" },
-      { label: "Conservação", value: "Transporte e armazenamento monitorados" },
-      { label: "Disponibilidade", value: "Consulte lote, validade e estoque" },
-    ],
-  },
-  {
-    title: "Bioestimuladores de Colágeno",
-    image: bioestimulador,
-    description:
-      "Portfólio voltado para protocolos de firmeza e estímulo dérmico, com rastreabilidade completa e suporte consultivo para planejamento clínico.",
-    canApply: ["Biomédicos", "Dentistas", "Médicos"],
-    canBuy: ["Clínicas", "Profissionais habilitados", "Pessoa jurídica da área"],
-    specs: [
-      { label: "Marcas", value: "Elleva, Diamond, Nutriex" },
-      { label: "Faixa de uso", value: "Protocolos faciais e corporais conforme indicação" },
-      { label: "Armazenamento", value: "Condições controladas de conservação" },
-      { label: "Disponibilidade", value: "Estoque consultivo sob demanda" },
-    ],
-  },
-  {
-    title: "Fios de PDO",
-    image: fiosDePdo,
-    description:
-      "Fios para sustentação e estímulo tecidual com atendimento consultivo para protocolos avançados e disponibilidade alinhada à agenda da clínica.",
-    canApply: ["Biomédicos", "Dentistas", "Médicos"],
-    canBuy: ["Clínicas", "Profissionais habilitados", "Pessoa jurídica da área"],
-    specs: [
-      { label: "Marcas", value: "i-Thread, Prodeep" },
-      { label: "Apresentação", value: "Configurações variadas para diferentes protocolos" },
-      { label: "Categoria", value: "Sustentação e bioestimulação tecidual" },
-      { label: "Disponibilidade", value: "Consulte medidas e estoque atual" },
-    ],
-  },
-  {
-    title: "Soro Fisiológico",
-    image: soro,
-    description:
-      "Soro fisiológico para apoio a procedimentos estéticos e clínicos, com disponibilidade alinhada à rotina da clínica e atendimento consultivo para reposição ágil.",
-    canApply: ["Biomédicos", "Dentistas", "Enfermeiros", "Médicos"],
-    canBuy: ["Clínicas", "Consultórios", "Pessoa jurídica da área"],
-    specs: [
-      { label: "Aplicação", value: "Apoio a procedimentos clínicos e estéticos" },
-      { label: "Disponibilidade", value: "Reposição recorrente conforme demanda" },
-      { label: "Armazenamento", value: "Organização e logística para uso imediato" },
-      { label: "Categoria", value: "Soro fisiológico para rotina profissional" },
-    ],
-  },
-  {
-    title: "Equipamentos Estéticos",
-    image: dermaRoller,
-    description:
-      "Equipamentos e acessórios para complementar protocolos com atendimento consultivo, orientação comercial e curadoria alinhada ao perfil da clínica.",
-    canApply: ["Biomédicos", "Dentistas", "Esteticistas", "Médicos"],
-    canBuy: ["Clínicas", "Consultórios", "Pessoa jurídica da área"],
-    specs: [
-      { label: "Linhas", value: "Derma Pen, Derma Roller, Skin Vibra" },
-      { label: "Categoria", value: "Equipamentos e acessórios para estética avançada" },
-      { label: "Disponibilidade", value: "Consulte modelos e pronta-entrega" },
-      { label: "Suporte", value: "Atendimento consultivo para seleção do portfólio" },
-    ],
-  },
-  {
-    title: "Derma Pen",
-    image: dermaPen,
-    description:
-      "Equipamento estético para procedimentos minimamente invasivos com aplicação precisa e suporte consultivo especializado.",
-    canApply: ["Biomédicos", "Dentistas", "Médicos", "Esteticistas habilitados"],
-    canBuy: ["Clínicas", "Profissionais habilitados", "Pessoa jurídica da área"],
-    specs: [
-      { label: "Categoria", value: "Equipamentos estéticos" },
-      { label: "Aplicação", value: "Procedimentos faciais e protocolos estéticos" },
-      { label: "Disponibilidade", value: "Consulte estoque e versões disponíveis" },
-      { label: "Suporte", value: "Atendimento consultivo para escolha do equipamento" },
-    ],
-  },
-  {
-    title: "SkinVibra",
-    image: skinVibra,
-    description:
-      "Equipamento estético para protocolos faciais com suporte consultivo, curadoria comercial e disponibilidade alinhada à rotina da clínica.",
-    canApply: ["Biomédicos", "Dentistas", "Médicos", "Esteticistas habilitados"],
-    canBuy: ["Clínicas", "Profissionais habilitados", "Pessoa jurídica da área"],
-    specs: [
-      { label: "Categoria", value: "Equipamentos estéticos" },
-      { label: "Aplicação", value: "Protocolos faciais e complementação de rotinas estéticas" },
-      { label: "Disponibilidade", value: "Consulte estoque e pronta-entrega" },
-      { label: "Suporte", value: "Atendimento consultivo para seleção do equipamento" },
-    ],
-  },
-];
-
-const AUTOPLAY_DELAY = 10000;
 const easeOut = [0.22, 1, 0.36, 1] as const;
+const loadPortfolioModal = () => import("./ProductPortfolioModal");
+const ProductPortfolioModal = React.lazy(loadPortfolioModal);
+
+type PortfolioCardProps = {
+  item: PortfolioItem;
+  index: number;
+  isActive: boolean;
+  onSelect: (index: number) => void;
+  onPrefetchModal: () => void;
+};
+
+const PortfolioCard = React.memo(({ item, index, isActive, onSelect, onPrefetchModal }: PortfolioCardProps) => {
+  const handleClick = React.useCallback(() => {
+    onSelect(index);
+  }, [index, onSelect]);
+
+  return (
+    <CarouselItem className="basis-[66%] py-4 pl-4 sm:basis-[44%] sm:py-5 lg:basis-[30%] lg:py-6 xl:basis-[26%]">
+      <button
+        type="button"
+        aria-haspopup="dialog"
+        onMouseEnter={onPrefetchModal}
+        onFocus={onPrefetchModal}
+        onClick={handleClick}
+        className={cn(
+          "group relative w-full overflow-hidden rounded-[32px] border bg-white/[0.04] text-left backdrop-blur-lg transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#07050D]",
+          "aspect-[0.72/1]",
+          isActive
+            ? "scale-[1.02] border-violet-400/40 shadow-[0_30px_100px_rgba(139,92,246,0.22)]"
+            : "border-white/10 opacity-80 hover:border-white/20 hover:opacity-100",
+        )}
+      >
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),transparent_28%,rgba(0,0,0,0.34)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_22%,rgba(139,92,246,0.2),transparent_42%)]" />
+        <div className="absolute inset-3 rounded-[26px] bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.01))]" />
+
+        <div
+          className={cn(
+            "absolute inset-0 rounded-[32px] transition-opacity duration-300",
+            isActive
+              ? "bg-[linear-gradient(140deg,rgba(255,255,255,0.12),transparent_18%,rgba(139,92,246,0.12)_58%,rgba(255,255,255,0.02)_100%)] opacity-100"
+              : "opacity-0",
+          )}
+        />
+
+        <div className="absolute inset-x-4 top-4 bottom-[4.4rem] z-10 flex items-center justify-center sm:inset-x-5 sm:top-5 sm:bottom-[4.9rem]">
+          <img
+            src={item.image.src}
+            alt={item.title}
+            width={item.image.width}
+            height={item.image.height}
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-contain object-center px-2 py-2 transition-transform duration-500 group-hover:scale-[1.04]"
+          />
+        </div>
+
+        <div className="absolute inset-x-3 bottom-3 z-20 rounded-[20px] border border-white/10 bg-[linear-gradient(135deg,rgba(12,10,20,0.74),rgba(25,18,39,0.44))] px-4 py-3 backdrop-blur-lg sm:inset-x-4 sm:bottom-4">
+          <p className="text-[0.62rem] uppercase tracking-[0.24em] text-violet-200/70">Categoria</p>
+          <p className="mt-1 text-sm font-medium leading-5 text-zinc-100">{item.title}</p>
+        </div>
+      </button>
+    </CarouselItem>
+  );
+});
+
+PortfolioCard.displayName = "PortfolioCard";
 
 const ProductPortfolioSection = () => {
+  const sectionRef = React.useRef<HTMLElement | null>(null);
   const [api, setApi] = React.useState<CarouselApi>();
   const [activeIndex, setActiveIndex] = React.useState(0);
   const [selectedIndex, setSelectedIndex] = React.useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const isSectionInView = useInView(sectionRef, { amount: 0.2, margin: "200px 0px" });
 
-  const selectedItem = selectedIndex !== null ? PORTFOLIO_ITEMS[selectedIndex] : null;
+  const selectedItem = React.useMemo(
+    () => (selectedIndex !== null ? PORTFOLIO_ITEMS[selectedIndex] : null),
+    [selectedIndex],
+  );
 
   const syncActiveSlide = React.useCallback(() => {
     if (!api) {
@@ -174,6 +107,10 @@ const ProductPortfolioSection = () => {
     setIsModalOpen(false);
   }, []);
 
+  const handlePrefetchModal = React.useCallback(() => {
+    void loadPortfolioModal();
+  }, []);
+
   React.useEffect(() => {
     if (!api) {
       return;
@@ -190,7 +127,7 @@ const ProductPortfolioSection = () => {
   }, [api, syncActiveSlide]);
 
   React.useEffect(() => {
-    if (!api || isModalOpen) {
+    if (!api || isModalOpen || !isSectionInView) {
       return;
     }
 
@@ -201,50 +138,27 @@ const ProductPortfolioSection = () => {
     return () => {
       window.clearInterval(interval);
     };
-  }, [api, activeIndex, isModalOpen]);
+  }, [api, isModalOpen, isSectionInView]);
 
   React.useEffect(() => {
-    if (!isModalOpen) {
-      return;
+    if (isSectionInView) {
+      handlePrefetchModal();
     }
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setIsModalOpen(false);
-      }
-    };
-
-    window.addEventListener("keydown", onKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", onKeyDown);
-    };
-  }, [isModalOpen]);
-
-  React.useEffect(() => {
-    if (!isModalOpen) {
-      return;
-    }
-
-    const { overflow } = document.body.style;
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.body.style.overflow = overflow;
-    };
-  }, [isModalOpen]);
+  }, [handlePrefetchModal, isSectionInView]);
 
   return (
     <>
-      <section id="produtos" className="exacty-section-blend relative overflow-hidden bg-transparent py-24 md:py-28 lg:py-32">
+      <section
+        ref={sectionRef}
+        id="produtos"
+        className="exacty-section-blend relative overflow-hidden bg-transparent py-24 md:py-28 lg:py-32"
+      >
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,5,13,0.72)_0%,rgba(11,7,18,0.44)_38%,rgba(7,5,13,0.72)_100%)]" />
-          <div className="absolute left-1/2 top-16 h-[360px] w-[360px] -translate-x-1/2 rounded-full bg-violet-600/18 blur-[130px]" />
-          <div className="absolute left-1/2 top-1/3 h-[520px] w-[820px] -translate-x-1/2 rounded-full bg-purple-500/10 blur-[180px]" />
+          <div className="absolute left-1/2 top-16 h-[320px] w-[320px] -translate-x-1/2 rounded-full bg-violet-600/18 blur-[108px]" />
+          <div className="absolute left-1/2 top-1/3 h-[480px] w-[760px] -translate-x-1/2 rounded-full bg-purple-500/10 blur-[148px]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(139,92,246,0.16),transparent_34%)]" />
-          <div className="absolute inset-x-0 -top-16 h-44 bg-[linear-gradient(180deg,rgba(7,5,13,0.48),rgba(15,10,24,0.14)_60%,transparent)] blur-[14px]" />
-          <div className="absolute inset-x-0 -bottom-20 h-52 bg-[linear-gradient(0deg,rgba(7,5,13,0.54),rgba(15,10,24,0.18)_52%,transparent)] blur-[18px]" />
-          <div className="absolute left-1/2 bottom-0 h-28 w-[min(920px,90vw)] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(122,78,228,0.08),rgba(122,78,228,0.02)_48%,transparent_76%)] blur-[50px]" />
+          <div className="absolute left-1/2 bottom-0 h-28 w-[min(920px,90vw)] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(122,78,228,0.08),rgba(122,78,228,0.02)_48%,transparent_76%)] blur-[40px]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.04)_0,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[length:18px_18px] opacity-[0.035]" />
           <div className="absolute inset-x-0 bottom-0 h-36 bg-[linear-gradient(to_top,rgba(7,5,13,0.62),transparent)]" />
         </div>
@@ -281,7 +195,7 @@ const ProductPortfolioSection = () => {
             transition={{ duration: 0.8, delay: 0.08, ease: easeOut }}
             className="relative mx-auto max-w-[1240px]"
           >
-            <div className="pointer-events-none absolute left-1/2 top-[42%] z-0 h-[320px] w-[320px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-500/16 blur-[120px] sm:h-[420px] sm:w-[420px]" />
+            <div className="pointer-events-none absolute left-1/2 top-[42%] z-0 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-500/16 blur-[96px] sm:h-[400px] sm:w-[400px]" />
             <div className="pointer-events-none absolute inset-y-0 left-0 z-20 hidden w-24 bg-gradient-to-r from-[#07050D] via-[#07050D]/92 to-transparent md:block" />
             <div className="pointer-events-none absolute inset-y-0 right-0 z-20 hidden w-24 bg-gradient-to-l from-[#07050D] via-[#07050D]/92 to-transparent md:block" />
 
@@ -294,64 +208,26 @@ const ProductPortfolioSection = () => {
                 }}
                 className="w-full"
               >
-                <CarouselContent className="cursor-grab items-stretch active:cursor-grabbing">
-                  {PORTFOLIO_ITEMS.map((item, index) => {
-                    const isActive = activeIndex === index;
-
-                    return (
-                      <CarouselItem
-                        key={item.title}
-                        className="basis-[66%] py-4 pl-4 sm:basis-[44%] sm:py-5 lg:basis-[30%] lg:py-6 xl:basis-[26%]"
-                      >
-                        <button
-                          type="button"
-                          aria-haspopup="dialog"
-                          onClick={() => handleSelectProduct(index)}
-                          className={cn(
-                            "group relative w-full overflow-hidden rounded-[32px] border bg-white/[0.04] text-left backdrop-blur-xl transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#07050D]",
-                            "aspect-[0.72/1]",
-                            isActive
-                              ? "scale-[1.02] border-violet-400/40 shadow-[0_30px_100px_rgba(139,92,246,0.22)]"
-                              : "border-white/10 opacity-80 hover:border-white/20 hover:opacity-100",
-                          )}
-                        >
-                          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),transparent_28%,rgba(0,0,0,0.34)_100%)]" />
-                          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_22%,rgba(139,92,246,0.2),transparent_42%)]" />
-                          <div className="absolute inset-3 rounded-[26px] bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.01))]" />
-                          <div
-                            className={cn(
-                              "absolute inset-0 rounded-[32px] transition-opacity duration-300",
-                              isActive
-                                ? "bg-[linear-gradient(140deg,rgba(255,255,255,0.12),transparent_18%,rgba(139,92,246,0.12)_58%,rgba(255,255,255,0.02)_100%)] opacity-100"
-                                : "opacity-0",
-                            )}
-                          />
-
-                          <div className="absolute inset-x-4 top-4 bottom-[4.4rem] z-10 flex items-center justify-center sm:inset-x-5 sm:top-5 sm:bottom-[4.9rem]">
-                            <img
-                              src={item.image}
-                              alt={item.title}
-                              className="h-full w-full object-contain object-center px-2 py-2 transition-transform duration-500 group-hover:scale-[1.04]"
-                            />
-                          </div>
-
-                          <div className="absolute inset-x-3 bottom-3 z-20 rounded-[20px] border border-white/10 bg-[linear-gradient(135deg,rgba(12,10,20,0.74),rgba(25,18,39,0.44))] px-4 py-3 backdrop-blur-xl sm:inset-x-4 sm:bottom-4">
-                            <p className="text-[0.62rem] uppercase tracking-[0.24em] text-violet-200/70">Categoria</p>
-                            <p className="mt-1 text-sm font-medium leading-5 text-zinc-100">{item.title}</p>
-                          </div>
-                        </button>
-                      </CarouselItem>
-                    );
-                  })}
+                <CarouselContent className="cursor-grab items-stretch active:cursor-grabbing will-change-transform">
+                  {PORTFOLIO_ITEMS.map((item, index) => (
+                    <PortfolioCard
+                      key={item.title}
+                      item={item}
+                      index={index}
+                      isActive={activeIndex === index}
+                      onSelect={handleSelectProduct}
+                      onPrefetchModal={handlePrefetchModal}
+                    />
+                  ))}
                 </CarouselContent>
 
                 <CarouselPrevious
                   variant="ghost"
-                  className="left-2 z-30 h-11 w-11 rounded-full border border-white/10 bg-white/[0.06] text-zinc-100 shadow-[0_18px_40px_rgba(0,0,0,0.28)] backdrop-blur-xl transition-all duration-300 hover:border-violet-300/30 hover:bg-violet-500/12 hover:text-white hover:shadow-[0_0_30px_rgba(139,92,246,0.18)] disabled:opacity-0 sm:left-4 md:left-6"
+                  className="left-2 z-30 h-11 w-11 rounded-full border border-white/10 bg-white/[0.06] text-zinc-100 shadow-[0_18px_40px_rgba(0,0,0,0.28)] backdrop-blur-lg transition-all duration-300 hover:border-violet-300/30 hover:bg-violet-500/12 hover:text-white hover:shadow-[0_0_30px_rgba(139,92,246,0.18)] disabled:opacity-0 sm:left-4 md:left-6"
                 />
                 <CarouselNext
                   variant="ghost"
-                  className="right-2 z-30 h-11 w-11 rounded-full border border-white/10 bg-white/[0.06] text-zinc-100 shadow-[0_18px_40px_rgba(0,0,0,0.28)] backdrop-blur-xl transition-all duration-300 hover:border-violet-300/30 hover:bg-violet-500/12 hover:text-white hover:shadow-[0_0_30px_rgba(139,92,246,0.18)] disabled:opacity-0 sm:right-4 md:right-6"
+                  className="right-2 z-30 h-11 w-11 rounded-full border border-white/10 bg-white/[0.06] text-zinc-100 shadow-[0_18px_40px_rgba(0,0,0,0.28)] backdrop-blur-lg transition-all duration-300 hover:border-violet-300/30 hover:bg-violet-500/12 hover:text-white hover:shadow-[0_0_30px_rgba(139,92,246,0.18)] disabled:opacity-0 sm:right-4 md:right-6"
                 />
               </Carousel>
             </div>
@@ -364,141 +240,9 @@ const ProductPortfolioSection = () => {
         </div>
       </section>
 
-      <AnimatePresence>
-        {isModalOpen && selectedItem ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[120] flex items-center justify-center p-4 md:p-6"
-          >
-            <button
-              className="absolute inset-0 bg-black/60 backdrop-blur-md"
-              onClick={handleCloseModal}
-              aria-label="Fechar modal"
-            />
-
-            <motion.div
-              initial={{ opacity: 0, y: 22, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 18, scale: 0.98 }}
-              transition={{ duration: 0.35, ease: easeOut }}
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="portfolio-modal-title"
-              className="relative z-10 w-full max-w-6xl"
-            >
-              <div className="relative max-h-[calc(100vh-2rem)] overflow-y-auto rounded-[36px] border border-white/10 bg-white/[0.05] shadow-[0_40px_140px_rgba(0,0,0,0.52)] backdrop-blur-2xl md:max-h-[calc(100vh-3rem)]">
-                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),transparent_24%,transparent_100%)] opacity-70" />
-                <div className="absolute -top-16 left-1/2 h-40 w-40 -translate-x-1/2 rounded-full bg-violet-500/10 blur-3xl" />
-
-                <button
-                  onClick={handleCloseModal}
-                  className="absolute right-4 top-4 z-20 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] text-zinc-200 backdrop-blur-xl transition-all duration-300 hover:border-violet-400/30 hover:bg-white/[0.08] hover:text-white"
-                  aria-label="Fechar"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-
-                <div className="relative z-10 p-6 md:p-8 lg:p-10">
-                  <div className="grid grid-cols-1 gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-                    <div className="relative flex min-h-[340px] items-center justify-center rounded-[28px] border border-white/10 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.12),rgba(255,255,255,0.02)_42%,transparent_70%)] p-6 md:min-h-[420px]">
-                      <div className="absolute inset-0 rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.05),transparent_35%,transparent_100%)]" />
-                      <img
-                        src={selectedItem.image}
-                        alt={selectedItem.title}
-                        className="relative z-10 max-h-[320px] w-full object-contain md:max-h-[380px]"
-                      />
-                    </div>
-
-                    <div>
-                      <p className="text-[11px] font-medium uppercase tracking-[0.26em] text-violet-200/70">
-                        FICHA COMERCIAL
-                      </p>
-
-                      <h3
-                        id="portfolio-modal-title"
-                        className="mt-3 text-3xl font-semibold leading-[1.05] tracking-[-0.04em] text-zinc-50 md:text-4xl"
-                      >
-                        {selectedItem.title}
-                      </h3>
-
-                      <p className="mt-4 text-base leading-8 text-zinc-400">{selectedItem.description}</p>
-
-                      <div className="mt-8 space-y-6">
-                        <div>
-                          <p className="mb-3 text-xs font-medium uppercase tracking-[0.22em] text-violet-200/70">
-                            Profissionais que podem aplicar
-                          </p>
-                          <div className="flex flex-wrap gap-3">
-                            {selectedItem.canApply.map((role) => (
-                              <div
-                                key={role}
-                                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-zinc-200 backdrop-blur-xl"
-                              >
-                                <UserRound className="h-4 w-4 text-violet-300" />
-                                <span>{role}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div>
-                          <p className="mb-3 text-xs font-medium uppercase tracking-[0.22em] text-violet-200/70">
-                            Profissionais que podem comprar
-                          </p>
-                          <div className="flex flex-wrap gap-3">
-                            {selectedItem.canBuy.map((role) => (
-                              <div
-                                key={role}
-                                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-zinc-200 backdrop-blur-xl"
-                              >
-                                <ShieldCheck className="h-4 w-4 text-violet-300" />
-                                <span>{role}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="mt-8">
-                        <p className="mb-4 text-xs font-medium uppercase tracking-[0.22em] text-violet-200/70">
-                          Especificações técnicas
-                        </p>
-
-                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                          {selectedItem.specs.map((spec) => (
-                            <div
-                              key={spec.label}
-                              className="rounded-2xl border border-white/10 bg-white/[0.035] p-4 backdrop-blur-xl"
-                            >
-                              <p className="text-xs uppercase tracking-[0.18em] text-zinc-500">{spec.label}</p>
-                              <p className="mt-2 text-sm leading-6 text-zinc-200">{spec.value}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="mt-8 flex flex-wrap gap-4">
-                        <a
-                          href={getWhatsAppUrl()}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center gap-2 rounded-full bg-[linear-gradient(180deg,#8b5cf6_0%,#6d28d9_100%)] px-6 py-3 text-sm font-medium text-white shadow-[0_12px_30px_rgba(139,92,246,0.28)] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_18px_36px_rgba(139,92,246,0.34)]"
-                        >
-                          Solicitar catálogo
-                          <ArrowRight className="h-4 w-4" />
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+      <React.Suspense fallback={null}>
+        <ProductPortfolioModal isOpen={isModalOpen} item={selectedItem} onClose={handleCloseModal} />
+      </React.Suspense>
     </>
   );
 };

@@ -19,7 +19,15 @@ const NavbarExactyMed = () => {
       <div className="mx-auto max-w-6xl">
         <nav className="hero-navbar-shell flex items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <a href="#hero" className="flex items-center" onClick={() => setOpen(false)}>
-            <img src={logo} alt="Exacty Med" className="h-7 w-auto sm:h-8 md:h-9" />
+            <img
+              src={logo}
+              alt="Exacty Med"
+              width={156}
+              height={40}
+              loading="eager"
+              decoding="async"
+              className="h-7 w-auto sm:h-8 md:h-9"
+            />
           </a>
 
           <div className="hidden flex-1 items-center justify-center gap-1 lg:flex">

@@ -1,6 +1,6 @@
 import * as React from "react";
-import estoqueImage from "@/assets/estoque.jpeg";
-import vanImage from "@/assets/van.png";
+import estoqueImage from "@/assets/optimized/estoque.webp";
+import vanImage from "@/assets/optimized/van.webp";
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
 import { PackageCheck, ShieldCheck, Truck, Users } from "lucide-react";
 
@@ -26,7 +26,10 @@ const AuthoritySectionExactyMed = () => {
     offset: ["start end", "end start"],
   });
   const rawVanX = useTransform(scrollYProgress, [0, 1], [vanBounds.startX, vanBounds.endX], { clamp: true });
-  const vanX = useSpring(rawVanX, prefersReducedMotion ? { stiffness: 1000, damping: 1000 } : { stiffness: 180, damping: 30, mass: 0.45 });
+  const vanX = useSpring(
+    rawVanX,
+    prefersReducedMotion ? { stiffness: 1000, damping: 1000 } : { stiffness: 180, damping: 30, mass: 0.45 },
+  );
 
   React.useEffect(() => {
     const trackElement = vanTrackRef.current;
@@ -103,20 +106,15 @@ const AuthoritySectionExactyMed = () => {
     >
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,5,13,0.72)_0%,rgba(11,7,18,0.44)_40%,rgba(7,5,13,0.72)_100%)]" />
-        <div className="absolute left-1/2 top-16 h-[360px] w-[360px] -translate-x-1/2 rounded-full bg-violet-600/15 blur-[130px]" />
-        <div className="absolute left-1/2 top-1/3 h-[520px] w-[820px] -translate-x-1/2 rounded-full bg-purple-500/10 blur-[180px]" />
+        <div className="absolute left-1/2 top-16 h-[320px] w-[320px] -translate-x-1/2 rounded-full bg-violet-600/15 blur-[108px]" />
+        <div className="absolute left-1/2 top-1/3 h-[480px] w-[760px] -translate-x-1/2 rounded-full bg-purple-500/10 blur-[148px]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(139,92,246,0.14),transparent_34%)]" />
-        <div className="absolute inset-x-0 -top-16 h-44 bg-[linear-gradient(180deg,rgba(7,5,13,0.48),rgba(15,10,24,0.14)_60%,transparent)] blur-[14px]" />
-        <div className="absolute inset-x-0 -bottom-20 h-52 bg-[linear-gradient(0deg,rgba(7,5,13,0.54),rgba(15,10,24,0.18)_52%,transparent)] blur-[18px]" />
-        <div className="absolute left-1/2 bottom-0 h-28 w-[min(920px,90vw)] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(122,78,228,0.08),rgba(122,78,228,0.02)_48%,transparent_76%)] blur-[50px]" />
+        <div className="absolute left-1/2 bottom-0 h-28 w-[min(920px,90vw)] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(122,78,228,0.08),rgba(122,78,228,0.02)_48%,transparent_76%)] blur-[40px]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.04)_0,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[length:20px_20px] opacity-[0.03]" />
       </div>
 
       <div className="pointer-events-none absolute inset-x-0 bottom-4 z-[16] md:bottom-6 lg:bottom-8">
-        <div
-          ref={vanTrackRef}
-          className="relative h-[88px] sm:h-[96px] md:h-[108px] lg:h-[118px] xl:h-[126px]"
-        >
+        <div ref={vanTrackRef} className="relative h-[88px] sm:h-[96px] md:h-[108px] lg:h-[118px] xl:h-[126px]">
           <div className="absolute inset-x-0 bottom-4 sm:bottom-5 md:bottom-6 lg:bottom-7">
             <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-gradient-to-r from-transparent via-white/12 to-transparent" />
             <div className="absolute inset-x-0 top-1/2 h-8 -translate-y-1/2 bg-[linear-gradient(90deg,rgba(124,58,237,0),rgba(124,58,237,0.14),rgba(124,58,237,0))] blur-[28px]" />
@@ -124,12 +122,16 @@ const AuthoritySectionExactyMed = () => {
 
           <motion.div
             ref={vanRef}
-            className="absolute bottom-0 left-0 will-change-transform pointer-events-none select-none"
+            className="absolute bottom-0 left-0 pointer-events-none select-none will-change-transform"
             style={{ x: vanX }}
           >
             <div className="absolute inset-x-2 bottom-2 h-4 rounded-full bg-black/35 blur-[16px] sm:inset-x-4 sm:h-5 md:bottom-3 md:h-6" />
             <img
               src={vanImage}
+              width={480}
+              height={480}
+              loading="lazy"
+              decoding="async"
               alt=""
               aria-hidden="true"
               className="relative z-10 w-[110px] object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.35)] sm:w-[122px] md:w-[140px] lg:w-[180px]"
@@ -175,7 +177,7 @@ const AuthoritySectionExactyMed = () => {
                 return (
                   <div
                     key={item.label}
-                    className="group flex items-center gap-3 rounded-[22px] border border-white/10 bg-white/[0.04] px-4 py-4 shadow-[0_16px_40px_rgba(0,0,0,0.24)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-violet-400/25 hover:bg-white/[0.055]"
+                    className="group flex items-center gap-3 rounded-[22px] border border-white/10 bg-white/[0.04] px-4 py-4 shadow-[0_16px_40px_rgba(0,0,0,0.24)] backdrop-blur-lg transition-all duration-300 hover:-translate-y-0.5 hover:border-violet-400/25 hover:bg-white/[0.055]"
                   >
                     <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-violet-400/20 bg-violet-500/10 text-violet-300 shadow-[0_0_24px_rgba(139,92,246,0.12)]">
                       <Icon className="h-[18px] w-[18px]" />
@@ -195,9 +197,9 @@ const AuthoritySectionExactyMed = () => {
             transition={{ duration: 0.8, delay: 0.08, ease: easeOut }}
             className="relative"
           >
-            <div className="pointer-events-none absolute left-1/2 top-1/2 h-[380px] w-[380px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-500/16 blur-[120px]" />
+            <div className="pointer-events-none absolute left-1/2 top-1/2 h-[360px] w-[360px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-500/16 blur-[96px]" />
 
-            <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.045] p-3.5 shadow-[0_30px_100px_rgba(0,0,0,0.38)] backdrop-blur-2xl md:p-4">
+            <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.045] p-3.5 shadow-[0_30px_100px_rgba(0,0,0,0.38)] backdrop-blur-xl md:p-4">
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),transparent_24%,transparent_100%)] opacity-70" />
               <div className="absolute -top-10 left-1/2 h-32 w-32 -translate-x-1/2 rounded-full bg-violet-500/10 blur-3xl" />
 
@@ -205,18 +207,26 @@ const AuthoritySectionExactyMed = () => {
                 ref={stockVisualRef}
                 className="relative z-10 aspect-[5/5.2] overflow-hidden rounded-[24px] border border-white/10 bg-black/20"
               >
-                <img src={estoqueImage} alt="Estoque da Exacty Med" className="h-full w-full object-cover object-center" />
+                <img
+                  src={estoqueImage}
+                  alt="Estoque da Exacty Med"
+                  width={720}
+                  height={960}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover object-center"
+                />
 
                 <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(7,5,13,0.94)_0%,rgba(7,5,13,0.34)_38%,rgba(7,5,13,0.06)_62%,transparent_76%)]" />
 
                 <div className="pointer-events-none absolute left-4 top-4 z-20 sm:left-5 sm:top-5">
-                  <span className="inline-flex items-center rounded-full border border-white/10 bg-black/30 px-3.5 py-1.5 text-[10px] font-medium uppercase tracking-[0.22em] text-zinc-200/80 backdrop-blur-xl sm:text-[11px]">
+                  <span className="inline-flex items-center rounded-full border border-white/10 bg-black/30 px-3.5 py-1.5 text-[10px] font-medium uppercase tracking-[0.22em] text-zinc-200/80 backdrop-blur-lg sm:text-[11px]">
                     ESTOQUE REAL E OPERAÇÃO CONTROLADA
                   </span>
                 </div>
 
                 <div className="pointer-events-none absolute inset-x-4 bottom-4 z-20 sm:inset-x-5 sm:bottom-5">
-                  <div className="rounded-[20px] border border-white/10 bg-black/35 px-4 py-3.5 backdrop-blur-xl">
+                  <div className="rounded-[20px] border border-white/10 bg-black/35 px-4 py-3.5 backdrop-blur-lg">
                     <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-violet-200/70 sm:text-[11px]">
                       DISPONIBILIDADE, CONSERVAÇÃO E LOGÍSTICA
                     </p>

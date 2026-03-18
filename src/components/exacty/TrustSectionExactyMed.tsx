@@ -92,18 +92,16 @@ const TrustSectionExactyMed = () => (
   >
     <div className="pointer-events-none absolute inset-0">
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,5,13,0.74)_0%,rgba(11,7,18,0.48)_40%,rgba(7,5,13,0.72)_100%)]" />
-      <div className="absolute left-1/2 top-10 h-[320px] w-[320px] -translate-x-1/2 rounded-full bg-violet-600/15 blur-[120px] md:h-[420px] md:w-[420px] md:blur-[150px]" />
-      <div className="absolute left-1/2 top-[26%] h-[440px] w-[760px] -translate-x-1/2 rounded-full bg-purple-500/10 blur-[180px]" />
+      <div className="absolute left-1/2 top-10 h-[320px] w-[320px] -translate-x-1/2 rounded-full bg-violet-600/15 blur-[96px] md:h-[420px] md:w-[420px] md:blur-[120px]" />
+      <div className="absolute left-1/2 top-[26%] h-[420px] w-[720px] -translate-x-1/2 rounded-full bg-purple-500/10 blur-[144px]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(139,92,246,0.14),transparent_34%)]" />
-      <div className="absolute inset-x-0 -top-16 h-44 bg-[linear-gradient(180deg,rgba(7,5,13,0.5),rgba(16,10,25,0.16)_58%,transparent)] blur-[14px]" />
-      <div className="absolute inset-x-0 -bottom-20 h-52 bg-[linear-gradient(0deg,rgba(7,5,13,0.56),rgba(16,10,25,0.18)_52%,transparent)] blur-[18px]" />
-      <div className="absolute left-1/2 bottom-0 h-28 w-[min(880px,88vw)] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(118,74,224,0.08),rgba(118,74,224,0.02)_46%,transparent_74%)] blur-[48px]" />
+      <div className="absolute left-1/2 bottom-0 h-28 w-[min(880px,88vw)] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(118,74,224,0.08),rgba(118,74,224,0.02)_46%,transparent_74%)] blur-[36px]" />
       <div className="absolute inset-0 opacity-[0.08] [background-image:radial-gradient(rgba(255,255,255,0.32)_0.8px,transparent_0.8px)] [background-size:28px_28px]" />
     </div>
 
     <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-8">
       <div className="mx-auto mb-14 max-w-5xl overflow-visible text-center md:mb-16 lg:mb-20">
-        <p className="relative mx-auto mb-7 w-fit max-w-full overflow-hidden rounded-full border border-white/12 bg-white/[0.045] px-5 py-2 text-[10px] font-medium uppercase tracking-[0.24em] text-zinc-300/80 shadow-[0_10px_35px_rgba(0,0,0,0.22)] backdrop-blur-2xl sm:px-6 sm:py-2.5 sm:text-[11px] md:px-7 md:py-3">
+        <p className="relative mx-auto mb-7 w-fit max-w-full overflow-hidden rounded-full border border-white/12 bg-white/[0.045] px-5 py-2 text-[10px] font-medium uppercase tracking-[0.24em] text-zinc-300/80 shadow-[0_10px_35px_rgba(0,0,0,0.22)] backdrop-blur-lg sm:px-6 sm:py-2.5 sm:text-[11px] md:px-7 md:py-3">
           <span className="pointer-events-none absolute inset-0 rounded-full bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(255,255,255,0.04)_36%,rgba(255,255,255,0.02)_100%)]" />
           <span className="pointer-events-none absolute inset-[1px] rounded-full bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.10),transparent_58%)] opacity-80" />
           <span className="pointer-events-none absolute -left-8 top-1/2 h-10 w-24 -translate-y-1/2 rotate-[-12deg] rounded-full bg-white/10 blur-2xl opacity-40" />
@@ -132,7 +130,7 @@ const TrustSectionExactyMed = () => (
           {TRUST_ITEMS.map((item) => (
             <div
               key={item.title}
-              className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.04] p-7 shadow-[0_20px_60px_rgba(0,0,0,0.34)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-violet-400/30 hover:bg-white/[0.055] hover:shadow-[0_28px_80px_rgba(76,29,149,0.22)]"
+              className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.04] p-7 shadow-[0_20px_60px_rgba(0,0,0,0.34)] backdrop-blur-lg transition-all duration-300 hover:-translate-y-1 hover:border-violet-400/30 hover:bg-white/[0.055] hover:shadow-[0_28px_80px_rgba(76,29,149,0.22)]"
             >
               <span className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.07),transparent_28%,transparent_100%)] opacity-70" />
               <span className="pointer-events-none absolute -top-12 left-1/2 h-28 w-28 -translate-x-1/2 rounded-full bg-violet-500/10 blur-3xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" />

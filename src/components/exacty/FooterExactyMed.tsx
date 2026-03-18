@@ -17,7 +17,7 @@ const FooterExactyMed = () => (
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
       className="relative mx-auto flex max-w-[1280px] flex-col items-center justify-between gap-4 text-center md:flex-row md:gap-6 md:text-left"
     >
-      <img src={logoExactyBranca} alt="Exacty Med" className="h-10 w-auto md:h-12" />
+      <img src={logoExactyBranca} alt="Exacty Med" loading="lazy" decoding="async" className="h-10 w-auto md:h-12" />
       <p className="text-sm text-white/50 md:text-[15px]">
         © {new Date().getFullYear()} Exacty Med — Distribuição especializada para profissionais da estética avançada.
       </p>
@@ -26,6 +26,8 @@ const FooterExactyMed = () => (
         <img
           src={logoCentoEOnze}
           alt="Cento e Onze"
+          loading="lazy"
+          decoding="async"
           className="h-5 w-auto object-contain opacity-90 md:h-6"
         />
       </div>

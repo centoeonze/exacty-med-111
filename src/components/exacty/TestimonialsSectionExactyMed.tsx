@@ -1,5 +1,5 @@
 import * as React from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 
 type Testimonial = {
   name: string;
@@ -93,27 +93,32 @@ const TESTIMONIALS: Testimonial[] = [
 ];
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
+const LOOPING_TESTIMONIALS = [...TESTIMONIALS, ...TESTIMONIALS];
 
 const TestimonialsSectionExactyMed = () => {
+  const sectionRef = React.useRef<HTMLElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
-  const marqueeItems = prefersReducedMotion ? TESTIMONIALS : [...TESTIMONIALS, ...TESTIMONIALS];
+  const isSectionInView = useInView(sectionRef, { amount: 0.2, margin: "180px 0px" });
+  const marqueeItems = prefersReducedMotion ? TESTIMONIALS : LOOPING_TESTIMONIALS;
 
   return (
-    <section id="depoimentos" className="exacty-section-blend relative overflow-hidden bg-transparent py-20 text-white md:py-24 lg:py-28">
+    <section
+      ref={sectionRef}
+      id="depoimentos"
+      className="exacty-section-blend relative overflow-hidden bg-transparent py-20 text-white md:py-24 lg:py-28"
+    >
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,4,15,0.68)_0%,rgba(11,7,19,0.42)_38%,rgba(7,4,15,0.74)_100%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(140,92,255,0.15),transparent_30%),radial-gradient(circle_at_bottom,rgba(94,51,201,0.12),transparent_28%)]" />
-        <div className="absolute left-1/2 top-16 h-[320px] w-[320px] -translate-x-1/2 rounded-full bg-violet-500/10 blur-[120px] md:h-[420px] md:w-[420px] md:blur-[150px]" />
-        <div className="absolute right-[10%] top-1/3 h-[320px] w-[320px] rounded-full bg-fuchsia-500/7 blur-[130px]" />
-        <div className="absolute inset-x-0 -top-16 h-40 bg-[linear-gradient(180deg,rgba(7,4,15,0.5),rgba(15,10,24,0.14)_58%,transparent)] blur-[14px]" />
-        <div className="absolute inset-x-0 -bottom-20 h-48 bg-[linear-gradient(0deg,rgba(7,4,15,0.56),rgba(15,10,24,0.18)_52%,transparent)] blur-[18px]" />
-        <div className="absolute left-1/2 bottom-0 h-24 w-[min(900px,90vw)] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(120,76,226,0.08),rgba(120,76,226,0.02)_46%,transparent_74%)] blur-[48px]" />
+        <div className="absolute left-1/2 top-16 h-[320px] w-[320px] -translate-x-1/2 rounded-full bg-violet-500/10 blur-[100px] md:h-[420px] md:w-[420px] md:blur-[124px]" />
+        <div className="absolute right-[10%] top-1/3 h-[300px] w-[300px] rounded-full bg-fuchsia-500/7 blur-[104px]" />
+        <div className="absolute left-1/2 bottom-0 h-24 w-[min(900px,90vw)] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(120,76,226,0.08),rgba(120,76,226,0.02)_46%,transparent_74%)] blur-[40px]" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-[1440px] px-6 md:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 24, filter: "blur(8px)" }}
-          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.72, ease: easeOut }}
           className="mx-auto max-w-4xl text-center text-white"
@@ -140,8 +145,8 @@ const TestimonialsSectionExactyMed = () => {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 18, filter: "blur(8px)" }}
-          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.76, delay: 0.08, ease: easeOut }}
           className="mt-11 md:mt-13"
@@ -151,10 +156,10 @@ const TestimonialsSectionExactyMed = () => {
               className={
                 prefersReducedMotion
                   ? "grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"
-                  : "testimonials-marquee-row flex w-max items-stretch gap-4 md:gap-5"
+                  : `${isSectionInView ? "testimonials-marquee-row " : ""}flex w-max items-stretch gap-4 md:gap-5`
               }
               style={
-                prefersReducedMotion
+                prefersReducedMotion || !isSectionInView
                   ? undefined
                   : ({
                       "--marquee-duration": "88s",
@@ -165,7 +170,7 @@ const TestimonialsSectionExactyMed = () => {
                 <article
                   key={`${item.name}-${index}`}
                   aria-hidden={!prefersReducedMotion && index >= TESTIMONIALS.length ? true : undefined}
-                  className="group relative w-[min(86vw,360px)] shrink-0 overflow-hidden rounded-[28px] border border-[rgba(142,112,214,0.11)] bg-[linear-gradient(180deg,rgba(21,14,32,0.82),rgba(10,7,17,0.7))] px-5 py-5 text-white backdrop-blur-[24px] shadow-[inset_0_1px_0_rgba(255,255,255,0.03),0_24px_68px_rgba(22,12,45,0.26)] transition-all duration-500 ease-out hover:-translate-y-1 hover:border-[rgba(166,133,245,0.18)] hover:bg-[linear-gradient(180deg,rgba(24,16,36,0.84),rgba(11,8,18,0.74))] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_30px_84px_rgba(55,30,116,0.28)] sm:w-[380px] md:w-[420px] md:px-6 md:py-5"
+                  className="group relative w-[min(86vw,360px)] shrink-0 overflow-hidden rounded-[28px] border border-[rgba(142,112,214,0.11)] bg-[linear-gradient(180deg,rgba(21,14,32,0.82),rgba(10,7,17,0.7))] px-5 py-5 text-white backdrop-blur-[20px] shadow-[inset_0_1px_0_rgba(255,255,255,0.03),0_24px_68px_rgba(22,12,45,0.26)] transition-all duration-500 ease-out hover:-translate-y-1 hover:border-[rgba(166,133,245,0.18)] hover:bg-[linear-gradient(180deg,rgba(24,16,36,0.84),rgba(11,8,18,0.74))] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_30px_84px_rgba(55,30,116,0.28)] sm:w-[380px] md:w-[420px] md:px-6 md:py-5"
                 >
                   <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.008)_34%,rgba(255,255,255,0)_100%)] opacity-80" />
                   <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(168,128,255,0.12),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(108,61,210,0.08),transparent_36%)] opacity-95" />
