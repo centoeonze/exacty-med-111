@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import logoCentoEOnze from "@/assets/centoeonzelogo copy.png";
 import logoExactyBranca from "@/assets/logoexactybranca.svg";
 
 const FooterExactyMed = () => (
@@ -14,12 +15,20 @@ const FooterExactyMed = () => (
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-      className="relative mx-auto flex max-w-[1280px] flex-col items-center justify-between gap-4 text-center md:flex-row md:text-left"
+      className="relative mx-auto flex max-w-[1280px] flex-col items-center justify-between gap-4 text-center md:flex-row md:gap-6 md:text-left"
     >
       <img src={logoExactyBranca} alt="Exacty Med" className="h-10 w-auto md:h-12" />
       <p className="text-sm text-white/50 md:text-[15px]">
         © {new Date().getFullYear()} Exacty Med — Distribuição especializada para profissionais da estética avançada.
       </p>
+      <div className="inline-flex items-center justify-center gap-3 text-white/58 md:justify-end">
+        <span className="text-xs font-medium tracking-[0.08em] text-white/55 md:text-[13px]">Desenvolvido por</span>
+        <img
+          src={logoCentoEOnze}
+          alt="Cento e Onze"
+          className="h-5 w-auto object-contain opacity-90 md:h-6"
+        />
+      </div>
     </motion.div>
   </footer>
 );
