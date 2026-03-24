@@ -162,7 +162,7 @@ const TestimonialsSectionExactyMed = () => {
                 prefersReducedMotion || !isSectionInView
                   ? undefined
                   : ({
-                      "--marquee-duration": "88s",
+                      "--marquee-duration": "176s",
                     } as React.CSSProperties)
               }
             >
