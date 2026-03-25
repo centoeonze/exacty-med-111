@@ -73,18 +73,29 @@ const PortfolioCard = React.memo(({ item, index, isActive, onSelect, onPrefetchM
 
 PortfolioCard.displayName = "PortfolioCard";
 
+const normalize = (s: string) =>
+  s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
 const ProductPortfolioSection = () => {
   const sectionRef = React.useRef<HTMLElement | null>(null);
   const [api, setApi] = React.useState<CarouselApi>();
   const [activeIndex, setActiveIndex] = React.useState(0);
-  const [selectedIndex, setSelectedIndex] = React.useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [selectedItem, setSelectedItem] = React.useState<PortfolioItem | null>(null);
+  const [searchTerm, setSearchTerm] = React.useState("");
   const isSectionInView = useInView(sectionRef, { amount: 0.2, margin: "200px 0px" });
 
-  const selectedItem = React.useMemo(
-    () => (selectedIndex !== null ? PORTFOLIO_ITEMS[selectedIndex] : null),
-    [selectedIndex],
-  );
+  const filteredItems = React.useMemo(() => {
+    if (!searchTerm.trim()) return PORTFOLIO_ITEMS;
+    const q = normalize(searchTerm);
+    return PORTFOLIO_ITEMS.filter((item) => {
+      const catSpec = item.specs.find((s) => s.label === "Categoria");
+      return (
+        normalize(item.title).includes(q) ||
+        (catSpec ? normalize(catSpec.value).includes(q) : false)
+      );
+    });
+  }, [searchTerm]);
 
   const syncActiveSlide = React.useCallback(() => {
     if (!api) {
@@ -96,11 +107,11 @@ const ProductPortfolioSection = () => {
 
   const handleSelectProduct = React.useCallback(
     (index: number) => {
-      setSelectedIndex(index);
+      setSelectedItem(filteredItems[index] ?? null);
       setIsModalOpen(true);
       api?.scrollTo(index);
     },
-    [api],
+    [api, filteredItems],
   );
 
   const handleCloseModal = React.useCallback(() => {
@@ -146,6 +157,11 @@ const ProductPortfolioSection = () => {
     }
   }, [handlePrefetchModal, isSectionInView]);
 
+  React.useEffect(() => {
+    api?.scrollTo(0);
+    setActiveIndex(0);
+  }, [api, searchTerm]);
+
   return (
     <>
       <section
@@ -186,52 +202,145 @@ const ProductPortfolioSection = () => {
               Selecione uma categoria para visualizar detalhes do produto, elegibilidade profissional e informações
               técnicas.
             </p>
-          </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.8, delay: 0.08, ease: easeOut }}
-            className="relative mx-auto max-w-[1240px]"
-          >
-            <div className="pointer-events-none absolute left-1/2 top-[42%] z-0 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-500/16 blur-[96px] sm:h-[400px] sm:w-[400px]" />
-            <div className="pointer-events-none absolute inset-y-0 left-0 z-20 hidden w-24 bg-gradient-to-r from-[#07050D] via-[#07050D]/92 to-transparent md:block" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 z-20 hidden w-24 bg-gradient-to-l from-[#07050D] via-[#07050D]/92 to-transparent md:block" />
-
-            <div className="px-2 sm:px-4 md:px-10 lg:px-14">
-              <Carousel
-                setApi={setApi}
-                opts={{
-                  align: "center",
-                  loop: true,
-                }}
-                className="w-full"
+            <div className="relative mx-auto mt-8 mb-2 w-full max-w-2xl">
+              <div
+                className={cn(
+                  "flex items-center gap-3 rounded-full border bg-white/[0.04] px-5 py-3 backdrop-blur-xl transition-all duration-300",
+                  "border-white/10 shadow-[0_0_30px_rgba(139,92,246,0.10)]",
+                  "focus-within:border-violet-400/30 focus-within:shadow-[0_0_38px_rgba(139,92,246,0.18)]",
+                )}
               >
-                <CarouselContent className="cursor-grab items-stretch active:cursor-grabbing will-change-transform">
-                  {PORTFOLIO_ITEMS.map((item, index) => (
-                    <PortfolioCard
-                      key={item.title}
-                      item={item}
-                      index={index}
-                      isActive={activeIndex === index}
-                      onSelect={handleSelectProduct}
-                      onPrefetchModal={handlePrefetchModal}
-                    />
-                  ))}
-                </CarouselContent>
-
-                <CarouselPrevious
-                  variant="ghost"
-                  className="left-2 z-30 h-11 w-11 rounded-full border border-white/10 bg-white/[0.06] text-zinc-100 shadow-[0_18px_40px_rgba(0,0,0,0.28)] backdrop-blur-lg transition-all duration-300 hover:border-violet-300/30 hover:bg-violet-500/12 hover:text-white hover:shadow-[0_0_30px_rgba(139,92,246,0.18)] disabled:opacity-0 sm:left-4 md:left-6"
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.75"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="shrink-0 text-white/35"
+                  aria-hidden="true"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+                <input
+                  type="search"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Buscar produto por nome..."
+                  aria-label="Buscar produto por nome"
+                  className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/35 focus:outline-none focus:ring-0 md:text-[15px] [&::-webkit-search-cancel-button]:hidden"
                 />
-                <CarouselNext
-                  variant="ghost"
-                  className="right-2 z-30 h-11 w-11 rounded-full border border-white/10 bg-white/[0.06] text-zinc-100 shadow-[0_18px_40px_rgba(0,0,0,0.28)] backdrop-blur-lg transition-all duration-300 hover:border-violet-300/30 hover:bg-violet-500/12 hover:text-white hover:shadow-[0_0_30px_rgba(139,92,246,0.18)] disabled:opacity-0 sm:right-4 md:right-6"
-                />
-              </Carousel>
+                {searchTerm && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchTerm("")}
+                    aria-label="Limpar busca"
+                    className="shrink-0 text-white/30 transition-colors duration-200 hover:text-white/60"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M18 6 6 18M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+              </div>
             </div>
           </motion.div>
+
+          {filteredItems.length === 0 ? (
+            <motion.div
+              key="empty"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: easeOut }}
+              className="mx-auto mt-10 flex max-w-sm flex-col items-center gap-3 rounded-[24px] border border-white/8 bg-white/[0.03] px-8 py-10 text-center backdrop-blur-xl shadow-[0_0_40px_rgba(139,92,246,0.08)]"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-violet-300/40"
+                aria-hidden="true"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
+              <p className="text-sm text-white/40">Nenhum produto encontrado para esta pesquisa.</p>
+              <button
+                type="button"
+                onClick={() => setSearchTerm("")}
+                className="mt-1 text-xs text-violet-300/60 transition-colors duration-200 hover:text-violet-300/90"
+              >
+                Limpar busca
+              </button>
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.8, delay: 0.08, ease: easeOut }}
+              className="relative mx-auto max-w-[1240px]"
+            >
+              <div className="pointer-events-none absolute left-1/2 top-[42%] z-0 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-500/16 blur-[96px] sm:h-[400px] sm:w-[400px]" />
+              <div className="pointer-events-none absolute inset-y-0 left-0 z-20 hidden w-24 bg-gradient-to-r from-[#07050D] via-[#07050D]/92 to-transparent md:block" />
+              <div className="pointer-events-none absolute inset-y-0 right-0 z-20 hidden w-24 bg-gradient-to-l from-[#07050D] via-[#07050D]/92 to-transparent md:block" />
+
+              <div className="px-2 sm:px-4 md:px-10 lg:px-14">
+                <Carousel
+                  setApi={setApi}
+                  opts={{
+                    align: "center",
+                    loop: filteredItems.length > 1,
+                  }}
+                  className="w-full"
+                >
+                  <CarouselContent className="cursor-grab items-stretch active:cursor-grabbing will-change-transform">
+                    {filteredItems.map((item, index) => (
+                      <PortfolioCard
+                        key={item.title}
+                        item={item}
+                        index={index}
+                        isActive={activeIndex === index}
+                        onSelect={handleSelectProduct}
+                        onPrefetchModal={handlePrefetchModal}
+                      />
+                    ))}
+                  </CarouselContent>
+
+                  <CarouselPrevious
+                    variant="ghost"
+                    className="left-2 z-30 h-11 w-11 rounded-full border border-white/10 bg-white/[0.06] text-zinc-100 shadow-[0_18px_40px_rgba(0,0,0,0.28)] backdrop-blur-lg transition-all duration-300 hover:border-violet-300/30 hover:bg-violet-500/12 hover:text-white hover:shadow-[0_0_30px_rgba(139,92,246,0.18)] disabled:opacity-0 sm:left-4 md:left-6"
+                  />
+                  <CarouselNext
+                    variant="ghost"
+                    className="right-2 z-30 h-11 w-11 rounded-full border border-white/10 bg-white/[0.06] text-zinc-100 shadow-[0_18px_40px_rgba(0,0,0,0.28)] backdrop-blur-lg transition-all duration-300 hover:border-violet-300/30 hover:bg-violet-500/12 hover:text-white hover:shadow-[0_0_30px_rgba(139,92,246,0.18)] disabled:opacity-0 sm:right-4 md:right-6"
+                  />
+                </Carousel>
+              </div>
+            </motion.div>
+          )}
 
           <p className="mx-auto mt-10 max-w-3xl text-center text-sm leading-6 text-zinc-500">
             Todos os produtos são comercializados exclusivamente para profissionais habilitados, conforme exigência

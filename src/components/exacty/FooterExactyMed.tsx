@@ -23,13 +23,21 @@ const FooterExactyMed = () => (
       </p>
       <div className="inline-flex items-center justify-center gap-3 text-white/58 md:justify-end">
         <span className="text-xs font-medium tracking-[0.08em] text-white/55 md:text-[13px]">Desenvolvido por</span>
-        <img
-          src={logoCentoEOnze}
-          alt="Cento e Onze"
-          loading="lazy"
-          decoding="async"
-          className="h-5 w-auto object-contain opacity-90 md:h-6"
-        />
+        <a
+          href="https://centoeonze.space/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Abrir site da centoeonze em nova guia"
+          className="cursor-pointer transition-opacity duration-200 hover:opacity-100"
+        >
+          <img
+            src={logoCentoEOnze}
+            alt="Cento e Onze"
+            loading="lazy"
+            decoding="async"
+            className="h-5 w-auto object-contain opacity-90 md:h-6"
+          />
+        </a>
       </div>
     </motion.div>
   </footer>
