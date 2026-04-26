@@ -11,6 +11,51 @@ type ProductPortfolioModalProps = {
 };
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
+const isAcidoHialuronicoTitle = (title: string) => title === "Preenchedores de Ácido Hialurônico";
+
+const splitSemicolonList = (value: string) =>
+  value
+    .split(";")
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+const SpecsValue = ({ label, value }: { label: string; value: string }) => {
+  const [expanded, setExpanded] = React.useState(false);
+
+  if (label !== "Marcas") {
+    return <p className="mt-2 text-sm leading-6 text-zinc-200">{value}</p>;
+  }
+
+  const brands = splitSemicolonList(value);
+  const visibleCount = 8;
+  const visible = expanded ? brands : brands.slice(0, visibleCount);
+  const hasMore = brands.length > visibleCount;
+
+  return (
+    <div className="mt-2">
+      <div className="flex flex-wrap gap-2">
+        {visible.map((brand) => (
+          <span
+            key={brand}
+            className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-zinc-200 backdrop-blur-lg"
+          >
+            {brand}
+          </span>
+        ))}
+      </div>
+
+      {hasMore ? (
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          className="mt-3 text-xs font-medium text-violet-300/80 transition-colors duration-200 hover:text-violet-200"
+        >
+          {expanded ? "Ver menos" : "Ver todas"}
+        </button>
+      ) : null}
+    </div>
+  );
+};
 
 const ProductPortfolioModal = ({ isOpen, item, onClose }: ProductPortfolioModalProps) => {
   React.useEffect(() => {
@@ -85,6 +130,26 @@ const ProductPortfolioModal = ({ isOpen, item, onClose }: ProductPortfolioModalP
                       decoding="async"
                       className="relative z-10 max-h-[320px] w-full object-contain md:max-h-[380px]"
                     />
+
+                    {isAcidoHialuronicoTitle(item.title) ? (
+                      <>
+                        <div className="pointer-events-none absolute left-6 top-6 z-20 rounded-full bg-red-600/90 px-3.5 py-1.5 text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-white shadow-[0_16px_44px_rgba(185,28,28,0.22)]">
+                          VENDA PARA PROFISSIONAIS HABILITADOS
+                        </div>
+                        <div className="pointer-events-none absolute bottom-6 left-1/2 z-20 w-[min(92%,560px)] -translate-x-1/2 rounded-2xl border border-white/10 bg-black/35 px-4 py-3 backdrop-blur-lg">
+                          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-medium text-white/85">
+                            <span className="inline-flex items-center gap-2">
+                              <span className="h-1.5 w-1.5 rounded-full bg-violet-300/80" aria-hidden="true" />
+                              1ml
+                            </span>
+                            <span className="inline-flex items-center gap-2">
+                              <span className="h-1.5 w-1.5 rounded-full bg-violet-300/80" aria-hidden="true" />
+                              Gel estéril/Injetável
+                            </span>
+                          </div>
+                        </div>
+                      </>
+                    ) : null}
                   </div>
 
                   <div>
@@ -149,7 +214,7 @@ const ProductPortfolioModal = ({ isOpen, item, onClose }: ProductPortfolioModalP
                             className="rounded-2xl border border-white/10 bg-white/[0.035] p-4 backdrop-blur-lg"
                           >
                             <p className="text-xs uppercase tracking-[0.18em] text-zinc-500">{spec.label}</p>
-                            <p className="mt-2 text-sm leading-6 text-zinc-200">{spec.value}</p>
+                            <SpecsValue label={spec.label} value={spec.value} />
                           </div>
                         ))}
                       </div>

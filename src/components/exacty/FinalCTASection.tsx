@@ -51,8 +51,8 @@ const FinalCTASection = () => {
                 transition={{ duration: 0.58, delay: 0.14, ease: easeOut }}
                 className="mx-auto mt-3 max-w-[620px] text-center text-[0.92rem] leading-6 text-white/75 md:text-[0.98rem] lg:mx-0 lg:mt-3.5 lg:text-left"
               >
-                Com a Exacty Med, você trabalha com estoque disponível, NF e lote rastreável, sem comprometer sua
-                agenda.
+                A Exacty Med cuida da qualidade, da procedência e da rastreabilidade, para que você foque no que
+                realmente importa: entregar resultados impecáveis.
               </motion.p>
             </div>
 

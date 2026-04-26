@@ -87,8 +87,8 @@ const HeroExactyMed = () => (
           transition={{ duration: 0.68, delay: 0.24, ease: easeOut }}
           className="text-balance mx-auto mt-2 max-w-3xl text-sm leading-relaxed text-[rgba(207,200,218,0.86)] sm:mt-2.5 sm:text-lg lg:text-[1.18rem]"
         >
-          Distribuição homologada ANVISA, lote rastreável e transporte adequado para medicamentos, do nosso estoque até
-          a sua clínica.
+          Empresa certificada ANVISA, com rastreabilidade do início ao fim e logística adequada para produtos de saúde e
+          medicamentos – direto do nosso estoque à sua clínica.
         </motion.p>
 
         <motion.div
@@ -123,7 +123,7 @@ const HeroExactyMed = () => (
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mt-4 text-[0.68rem] uppercase tracking-[0.26em] text-white/55 sm:mt-5 sm:text-xs"
         >
-          Atendimento exclusivo para profissionais habilitados.
+          Venda exclusiva para profissionais habilitados.
         </motion.p>
 
         <motion.div

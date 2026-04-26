@@ -6,8 +6,10 @@ import FloatingWhatsAppButton from "@/components/exacty/FloatingWhatsAppButton";
 import FooterExactyMed from "@/components/exacty/FooterExactyMed";
 
 const ProductPortfolioSection = lazy(() => import("@/components/exacty/ProductPortfolioSection"));
+const RegulatorySectionExactyMed = lazy(() => import("@/components/exacty/RegulatorySectionExactyMed"));
 const AuthoritySectionExactyMed = lazy(() => import("@/components/exacty/AuthoritySectionExactyMed"));
 const TestimonialsSectionExactyMed = lazy(() => import("@/components/exacty/TestimonialsSectionExactyMed"));
+const FAQSectionExactyMed = lazy(() => import("@/components/exacty/FAQSectionExactyMed"));
 const FinalCTASection = lazy(() => import("@/components/exacty/FinalCTASection"));
 
 const SectionPlaceholder = ({ className }: { className: string }) => (
@@ -36,6 +38,9 @@ const Index = () => (
       <main>
         <HeroExactyMed />
         <TrustSectionExactyMed />
+        <Suspense fallback={<SectionPlaceholder className="min-h-[760px] md:min-h-[820px]" />}>
+          <RegulatorySectionExactyMed />
+        </Suspense>
         <Suspense fallback={<SectionPlaceholder className="min-h-[960px] md:min-h-[1040px]" />}>
           <ProductPortfolioSection />
         </Suspense>
@@ -44,6 +49,9 @@ const Index = () => (
         </Suspense>
         <Suspense fallback={<SectionPlaceholder className="min-h-[760px] md:min-h-[820px]" />}>
           <TestimonialsSectionExactyMed />
+        </Suspense>
+        <Suspense fallback={<SectionPlaceholder className="min-h-[760px] md:min-h-[820px]" />}>
+          <FAQSectionExactyMed />
         </Suspense>
         <Suspense fallback={<SectionPlaceholder className="min-h-[360px] md:min-h-[420px]" />}>
           <FinalCTASection />

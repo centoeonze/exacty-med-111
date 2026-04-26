@@ -16,10 +16,14 @@ type PortfolioCardProps = {
   onPrefetchModal: () => void;
 };
 
+const isAcidoHialuronicoItem = (item: PortfolioItem) => item.title === "Preenchedores de Ácido Hialurônico";
+
 const PortfolioCard = React.memo(({ item, index, isActive, onSelect, onPrefetchModal }: PortfolioCardProps) => {
   const handleClick = React.useCallback(() => {
     onSelect(index);
   }, [index, onSelect]);
+
+  const isAcidoHialuronico = isAcidoHialuronicoItem(item);
 
   return (
     <CarouselItem className="basis-[66%] py-4 pl-4 sm:basis-[44%] sm:py-5 lg:basis-[30%] lg:py-6 xl:basis-[26%]">
@@ -60,6 +64,26 @@ const PortfolioCard = React.memo(({ item, index, isActive, onSelect, onPrefetchM
             decoding="async"
             className="h-full w-full object-contain object-center px-2 py-2 transition-transform duration-500 group-hover:scale-[1.04]"
           />
+
+          {isAcidoHialuronico ? (
+            <>
+              <div className="pointer-events-none absolute left-4 top-4 z-20 rounded-full bg-red-600/90 px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.22em] text-white shadow-[0_14px_36px_rgba(185,28,28,0.22)] sm:left-5 sm:top-5 sm:text-[0.62rem]">
+                VENDA PARA PROFISSIONAIS HABILITADOS
+              </div>
+              <div className="pointer-events-none absolute bottom-4 left-1/2 z-20 w-[min(92%,520px)] -translate-x-1/2 rounded-2xl border border-white/10 bg-black/35 px-4 py-3 backdrop-blur-lg sm:bottom-5">
+                <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[0.75rem] font-medium text-white/80">
+                  <span className="inline-flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-violet-300/80" aria-hidden="true" />
+                    1ml
+                  </span>
+                  <span className="inline-flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-violet-300/80" aria-hidden="true" />
+                    Gel estéril/Injetável
+                  </span>
+                </div>
+              </div>
+            </>
+          ) : null}
         </div>
 
         <div className="absolute inset-x-3 bottom-3 z-20 rounded-[20px] border border-white/10 bg-[linear-gradient(135deg,rgba(12,10,20,0.74),rgba(25,18,39,0.44))] px-4 py-3 backdrop-blur-lg sm:inset-x-4 sm:bottom-4">
@@ -343,8 +367,7 @@ const ProductPortfolioSection = () => {
           )}
 
           <p className="mx-auto mt-10 max-w-3xl text-center text-sm leading-6 text-zinc-500">
-            Todos os produtos são comercializados exclusivamente para profissionais habilitados, conforme exigência
-            regulatória.
+            Venda exclusiva para profissionais habilitados.
           </p>
         </div>
       </section>

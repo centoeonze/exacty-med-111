@@ -1,6 +1,6 @@
 const TRUST_ITEMS = [
   {
-    title: "Nota fiscal e lote rastreável",
+    title: "Nota fiscal e rastreabilidade",
     desc: "Procedência garantida em cada produto.",
     icon: (
       <svg
@@ -23,7 +23,7 @@ const TRUST_ITEMS = [
   },
   {
     title: "Armazenamento e envio adequado",
-    desc: "Controle rigoroso de temperatura.",
+    desc: "Controle rigoroso de temperatura e manuseio",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -113,7 +113,7 @@ const TrustSectionExactyMed = () => (
 
         <h2 className="mx-auto max-w-4xl overflow-visible pb-[0.04em] text-center text-4xl font-semibold leading-[1.11] tracking-[-0.045em] text-zinc-50 sm:text-5xl md:text-6xl lg:text-[68px]">
           <span className="inline-block overflow-visible pb-[0.08em] bg-[linear-gradient(180deg,#e9defd_0%,#c8a9ff_46%,#8b5cf6_100%)] bg-clip-text text-transparent [-webkit-text-fill-color:transparent]">
-            Segurança operacional
+            Segurança total
           </span>
           <br className="hidden md:block" />
           <span className="text-zinc-50">
