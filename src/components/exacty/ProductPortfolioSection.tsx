@@ -24,6 +24,35 @@ const PortfolioCard = React.memo(({ item, index, isActive, onSelect, onPrefetchM
   }, [index, onSelect]);
 
   const isAcidoHialuronico = isAcidoHialuronicoItem(item);
+  const hasLoggedDermocosmeticosRender = React.useRef(false);
+
+  React.useEffect(() => {
+    if (item.title !== "Dermocosméticos" || hasLoggedDermocosmeticosRender.current) {
+      return;
+    }
+    hasLoggedDermocosmeticosRender.current = true;
+    // #region agent log
+    fetch("http://127.0.0.1:7794/ingest/c8d2e830-b97e-4182-b308-fa8d37d9fdb1", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "6e848a" },
+      body: JSON.stringify({
+        sessionId: "6e848a",
+        runId: "run1",
+        hypothesisId: "H1",
+        location: "ProductPortfolioSection.tsx:PortfolioCard.useEffect",
+        message: "Dermocosmeticos card render metadata",
+        data: {
+          title: item.title,
+          src: item.image.src,
+          encodedSrc: encodeURI(item.image.src),
+          width: item.image.width,
+          height: item.image.height,
+        },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
+  }, [item.image.height, item.image.src, item.image.width, item.title]);
 
   return (
     <CarouselItem className="basis-[66%] py-4 pl-4 sm:basis-[44%] sm:py-5 lg:basis-[30%] lg:py-6 xl:basis-[26%]">
@@ -62,6 +91,56 @@ const PortfolioCard = React.memo(({ item, index, isActive, onSelect, onPrefetchM
             height={item.image.height}
             loading="lazy"
             decoding="async"
+            onLoad={(event) => {
+              if (item.title !== "Dermocosméticos") {
+                return;
+              }
+              const target = event.currentTarget;
+              // #region agent log
+              fetch("http://127.0.0.1:7794/ingest/c8d2e830-b97e-4182-b308-fa8d37d9fdb1", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "6e848a" },
+                body: JSON.stringify({
+                  sessionId: "6e848a",
+                  runId: "run1",
+                  hypothesisId: "H3",
+                  location: "ProductPortfolioSection.tsx:PortfolioCard.img.onLoad",
+                  message: "Dermocosmeticos image loaded",
+                  data: {
+                    currentSrc: target.currentSrc,
+                    naturalWidth: target.naturalWidth,
+                    naturalHeight: target.naturalHeight,
+                  },
+                  timestamp: Date.now(),
+                }),
+              }).catch(() => {});
+              // #endregion
+            }}
+            onError={(event) => {
+              if (item.title !== "Dermocosméticos") {
+                return;
+              }
+              const target = event.currentTarget;
+              // #region agent log
+              fetch("http://127.0.0.1:7794/ingest/c8d2e830-b97e-4182-b308-fa8d37d9fdb1", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "6e848a" },
+                body: JSON.stringify({
+                  sessionId: "6e848a",
+                  runId: "run1",
+                  hypothesisId: "H2",
+                  location: "ProductPortfolioSection.tsx:PortfolioCard.img.onError",
+                  message: "Dermocosmeticos image failed to load",
+                  data: {
+                    src: item.image.src,
+                    currentSrc: target.currentSrc,
+                    encodedSrc: encodeURI(item.image.src),
+                  },
+                  timestamp: Date.now(),
+                }),
+              }).catch(() => {});
+              // #endregion
+            }}
             className="h-full w-full object-contain object-center px-2 py-2 transition-transform duration-500 group-hover:scale-[1.04]"
           />
 

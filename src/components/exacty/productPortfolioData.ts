@@ -156,8 +156,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
   },
   {
     title: "Skinboosters",
-    // TODO: adicionar imagem real aprovada para a categoria "Skinboosters" quando existir no repositório.
-    image: { src: createPlaceholderCardImageDataUri("Skinboosters"), width: 620, height: 980 },
+    image: { src: "/regulatorio/Skinbooster copiar 2.png", width: 994, height: 375 },
     description: "Restylane Vital e Saypha Rich.",
     canApply: ensureProfessionals(["Biomédicos", "Dentistas", "Médicos"]),
     canBuy: ["Clínicas", "Profissionais habilitados", "Pessoa jurídica da área"],
@@ -190,8 +189,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
   },
   {
     title: "Dermocosméticos",
-    // TODO: adicionar imagem real aprovada para a categoria "Dermocosméticos" quando existir no repositório.
-    image: { src: createPlaceholderCardImageDataUri("Dermocosméticos"), width: 620, height: 980 },
+    image: { src: "/regulatorio/dermocosmeticos-copiar-3.png", width: 405, height: 487 },
     description: "Máscaras, hidratantes e séruns especializados.",
     canApply: ensureProfessionals(["Biomédicos", "Dentistas", "Médicos", "Esteticistas habilitados"]),
     canBuy: ["Clínicas", "Profissionais habilitados", "Pessoa jurídica da área"],
@@ -206,8 +204,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
   },
   {
     title: "Descartáveis",
-    // TODO: adicionar imagem real aprovada para a categoria "Descartáveis" quando existir no repositório.
-    image: { src: createPlaceholderCardImageDataUri("Descartáveis"), width: 620, height: 980 },
+    image: { src: "/regulatorio/descartaveis-copiar.png", width: 700, height: 416 },
     description: "Itens descartáveis para rotina clínica.",
     canApply: ensureProfessionals(["Biomédicos", "Dentistas", "Médicos", "Esteticistas habilitados"]),
     canBuy: ["Clínicas", "Profissionais habilitados", "Pessoa jurídica da área"],
@@ -222,8 +219,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
   },
   {
     title: "Saneantes",
-    // TODO: adicionar imagem real aprovada para a categoria "Saneantes" quando existir no repositório.
-    image: { src: createPlaceholderCardImageDataUri("Saneantes"), width: 620, height: 980 },
+    image: { src: "/regulatorio/frasco-01-copiar-2.png", width: 236, height: 391 },
     description: "Smart Clorex e Álcool 70º.",
     canApply: ensureProfessionals(["Biomédicos", "Dentistas", "Enfermeiros", "Médicos"]),
     canBuy: ["Clínicas", "Consultórios", "Pessoa jurídica da área"],
