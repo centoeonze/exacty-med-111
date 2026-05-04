@@ -219,7 +219,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
   },
   {
     title: "Saneantes",
-    image: { src: "/regulatorio/frasco-01-copiar-2.png", width: 236, height: 391 },
+    image: { src: "/regulatorio/saneantes.png", width: 203, height: 360 },
     description: "Smart Clorex e Álcool 70º.",
     canApply: ensureProfessionals(["Biomédicos", "Dentistas", "Enfermeiros", "Médicos"]),
     canBuy: ["Clínicas", "Consultórios", "Pessoa jurídica da área"],

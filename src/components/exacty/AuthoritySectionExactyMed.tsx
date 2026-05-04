@@ -19,36 +19,8 @@ type OperationPhoto = {
   alt: string;
   title?: string;
   description?: string;
-};
-
-const createOperationPlaceholderDataUri = (title: string) => {
-  const svg = `
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1120" viewBox="0 0 900 1120">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#140b22"/>
-      <stop offset="0.6" stop-color="#07050d"/>
-      <stop offset="1" stop-color="#05020b"/>
-    </linearGradient>
-    <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="rgba(255,255,255,0.18)"/>
-      <stop offset="0.5" stop-color="rgba(169,124,255,0.16)"/>
-      <stop offset="1" stop-color="rgba(255,255,255,0.10)"/>
-    </linearGradient>
-  </defs>
-
-  <rect x="60" y="60" width="780" height="1000" rx="54" fill="url(#bg)" stroke="url(#edge)" stroke-width="2"/>
-  <circle cx="450" cy="470" r="260" fill="rgba(139,92,246,0.11)"/>
-  <rect x="150" y="260" width="600" height="520" rx="42" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.10)"/>
-  <text x="450" y="520" text-anchor="middle" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto" font-size="34" font-weight="700" fill="rgba(233,222,253,0.92)">
-    ${title}
-  </text>
-  <text x="450" y="568" text-anchor="middle" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto" font-size="18" font-weight="500" fill="rgba(207,200,218,0.78)">
-    Placeholder preparado para foto real
-  </text>
-</svg>
-`.trim();
-  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+  width?: number;
+  height?: number;
 };
 
 const AuthoritySectionExactyMed = () => {
@@ -152,10 +124,12 @@ const AuthoritySectionExactyMed = () => {
         description: "Processo de separação e conferência dos pedidos.",
       },
       {
-        src: createOperationPlaceholderDataUri("Treinamentos"),
+        src: "/regulatorio/exacty_-5.jpg",
         alt: "Treinamentos Exacty Med",
         title: "Treinamentos",
         description: "Workshops, relacionamento e bastidores da distribuição.",
+        width: 2599,
+        height: 3899,
       },
     ],
     [],
@@ -298,8 +272,8 @@ const AuthoritySectionExactyMed = () => {
                         <img
                           src={photo.src}
                           alt={photo.alt}
-                          width={720}
-                          height={960}
+                          width={photo.width ?? 720}
+                          height={photo.height ?? 960}
                           loading="lazy"
                           decoding="async"
                           className="h-full w-full object-cover object-center"
