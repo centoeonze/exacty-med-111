@@ -1,5 +1,4 @@
 import * as React from "react";
-import estoqueImage from "@/assets/optimized/estoque.webp";
 import vanImage from "@/assets/optimized/van.webp";
 import { Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
@@ -141,13 +140,13 @@ const AuthoritySectionExactyMed = () => {
   const operationPhotos = React.useMemo<OperationPhoto[]>(
     () => [
       {
-        src: estoqueImage,
+        src: "/regulatorio/estoque2x.png",
         alt: "Estoque Exacty Med",
         title: "Estoque",
         description: "Ambiente controlado para armazenamento dos produtos.",
       },
       {
-        src: createOperationPlaceholderDataUri("Separação de pedidos"),
+        src: "/regulatorio/estoque3x.png",
         alt: "Separação de pedidos Exacty Med",
         title: "Separação",
         description: "Processo de separação e conferência dos pedidos.",

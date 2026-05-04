@@ -1,5 +1,8 @@
 import { motion } from "framer-motion";
 import { Download, FileBadge2 } from "lucide-react";
+import alvaraFuncionamentoPdf from "@/assets/alvara-funcionamento.pdf";
+import afeSaneantesExmdPdf from "@/assets/afe-saneantes-exmd.pdf";
+import licencaSanitariaPdf from "@/assets/licenca-sanitaria-val-25-02-2027.pdf";
 
 type RegulatoryDocument = {
   title: string;
@@ -13,19 +16,19 @@ const DOCUMENTS: RegulatoryDocument[] = [
     title: "Licença de Funcionamento",
     description: "Documento para comprovação de regularidade operacional e funcionamento.",
     fileType: "PDF",
-    fileUrl: "/regulatorio/placeholder-licenca-funcionamento.pdf",
+    fileUrl: alvaraFuncionamentoPdf,
   },
   {
     title: "Autorização de Funcionamento (AFE)",
     description: "Autorização aplicável para atividades reguladas e distribuição no segmento de saúde.",
     fileType: "PDF",
-    fileUrl: "/regulatorio/placeholder-afe.pdf",
+    fileUrl: afeSaneantesExmdPdf,
   },
   {
     title: "Certificado / Declaração de Regularidade",
     description: "Documento técnico para apoio em processos de cadastro e qualificação de fornecedores.",
     fileType: "PDF",
-    fileUrl: "/regulatorio/placeholder-regularidade.pdf",
+    fileUrl: licencaSanitariaPdf,
   },
 ];
 
