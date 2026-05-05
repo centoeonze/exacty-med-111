@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { Download, FileBadge2 } from "lucide-react";
 import alvaraFuncionamentoPdf from "@/assets/alvara-funcionamento.pdf";
-import afeSaneantesExmdPdf from "@/assets/afe-saneantes-exmd.pdf";
 import licencaSanitariaPdf from "@/assets/licenca-sanitaria-val-25-02-2027.pdf";
 
 type RegulatoryDocument = {
@@ -21,8 +20,8 @@ const DOCUMENTS: RegulatoryDocument[] = [
   {
     title: "Autorização de Funcionamento (AFE)",
     description: "Autorização aplicável para atividades reguladas e distribuição no segmento de saúde.",
-    fileType: "PDF",
-    fileUrl: afeSaneantesExmdPdf,
+    fileType: "LINK",
+    fileUrl: "https://drive.google.com/drive/folders/1qx0kRDbt2iFJHe2wWObq2unZQjz2KPAY?usp=drive_link",
   },
   {
     title: "Certificado / Declaração de Regularidade",
@@ -104,10 +103,12 @@ const RegulatorySectionExactyMed = () => (
                 {isAvailable ? (
                   <a
                     href={doc.fileUrl}
-                    download
+                    download={doc.fileType === "PDF" ? true : undefined}
+                    target={doc.fileType !== "PDF" ? "_blank" : undefined}
+                    rel={doc.fileType !== "PDF" ? "noopener noreferrer" : undefined}
                     className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(180deg,#8b5cf6_0%,#6d28d9_100%)] px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_34px_rgba(139,92,246,0.22)] transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_18px_40px_rgba(139,92,246,0.28)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#07050D]"
                   >
-                    Baixar documento
+                    {doc.fileType === "PDF" ? "Baixar documento" : "Abrir documentos"}
                     <Download className="h-4 w-4" />
                   </a>
                 ) : (

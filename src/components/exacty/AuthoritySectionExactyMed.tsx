@@ -295,7 +295,7 @@ const AuthoritySectionExactyMed = () => {
 
                 <div className="pointer-events-none absolute left-4 top-4 z-20 sm:left-5 sm:top-5">
                   <span className="inline-flex items-center rounded-full border border-white/10 bg-black/30 px-3.5 py-1.5 text-[10px] font-medium uppercase tracking-[0.22em] text-zinc-200/80 backdrop-blur-lg sm:text-[11px]">
-                    ESTOQUE REAL E OPERAÇÃO CONTROLADA
+                    AUTORIZAÇÃO ESPECIAL E AUTORIZAÇÕES DE FUNCIONAMENTO
                   </span>
                 </div>
 
