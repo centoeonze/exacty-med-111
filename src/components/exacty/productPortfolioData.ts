@@ -155,7 +155,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
   },
   {
     title: "Skinboosters",
-    image: { src: "/regulatorio/Skinbooster copiar 2.png", width: 994, height: 375 },
+    image: { src: "/regulatorio/Skinbooster copiar 3.png", width: 994, height: 375 },
     description: "Restylane Vital e Saypha Rich.",
     canApply: ensureProfessionals(["Biomédicos", "Dentistas", "Médicos"]),
     canBuy: ["Clínicas", "Profissionais habilitados", "Pessoa jurídica da área"],
@@ -188,7 +188,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
   },
   {
     title: "Dermocosméticos",
-    image: { src: "/regulatorio/dermocosmeticos-copiar-3.png", width: 405, height: 487 },
+    image: { src: "/regulatorio/dermocosmeticologo.png", width: 405, height: 487 },
     description: "Máscaras, hidratantes e séruns especializados.",
     canApply: ensureProfessionals(["Biomédicos", "Dentistas", "Médicos", "Esteticistas habilitados"]),
     canBuy: ["Clínicas", "Profissionais habilitados", "Pessoa jurídica da área"],
@@ -203,7 +203,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
   },
   {
     title: "Descartáveis",
-    image: { src: "/regulatorio/descartaveis-copiar.png", width: 700, height: 416 },
+    image: { src: "/regulatorio/descardlogo.png", width: 700, height: 416 },
     description: "Itens descartáveis para rotina clínica.",
     canApply: ensureProfessionals(["Biomédicos", "Dentistas", "Médicos", "Esteticistas habilitados"]),
     canBuy: ["Clínicas", "Profissionais habilitados", "Pessoa jurídica da área"],
@@ -211,7 +211,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
       {
         label: "Produtos",
         value:
-          "ALGODÃO HIDRÓFILO NATHY 500G; MÁSCARA TRIPLA BRANCA / PRETA (MEDIX) (50 UN); PROPÉ BRANCO 20GR (100 UN); TOUCA BRANCA DESCARTÁVEL (100 UN); LENÇOL COM ELÁSTICO TNT 2,00 x 0,90MT (10 UN); TORNEIRA 3 VIAS LUER LOCK (DESCARPACK); INDICADOR BIOLÓGICO A VAPOR - 24H (2i) (10 UN); INDICADOR QUÍMICO A VAPOR TIPO I6 (D TECH) (250 UN); BABADOR IMPERMEÁVEL BRANCO (SSPLUS) (100 UN); BABADOR IMPERMEÁVEL BRANCO OU COLORIDO (BIODINÂMICA) (100 UN); FITA MICROPOROSA 12,5MM X 10M BEGE (3M); FITA MICROPOROSA 25MM X 10M BEGE (3M); CURATIVO PÓS COLETA DE SANGUE BEGE (BLOOD STOP) (500 UN).",
+          "Algodão hidrófilo Nathy 500 g\nMáscara tripla branca/preta Medix, caixa com 50 unidades\nPropé branco 20 g, pacote com 100 unidades\nTouca branca descartável, pacote com 100 unidades\nLençol com elástico em TNT, 2,00 m x 0,90 m, pacote com 10 unidades\nTorneira 3 vias Luer Lock Descarpack\nIndicador biológico a vapor 24 h 2i, caixa com 10 unidades\nIndicador químico a vapor tipo I6 D Tech, caixa com 250 unidades\nBabador impermeável branco SSPlus, pacote com 100 unidades\nBabador impermeável branco ou colorido Biodinâmica, pacote com 100 unidades\nFita microporosa 12,5 mm x 10 m bege 3M\nFita microporosa 25 mm x 10 m bege 3M\nCurativo pós-coleta de sangue bege Blood Stop, caixa com 500 unidades",
       },
       { label: "Categoria", value: "descartaveis algodao mascara prope touca lencol torneira 3 vias luer lock indicador biologico indicador quimico babador fita microporosa curativo blood stop" },
     ],

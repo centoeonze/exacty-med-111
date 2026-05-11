@@ -22,6 +22,17 @@ const splitSemicolonList = (value: string) =>
 const SpecsValue = ({ label, value }: { label: string; value: string }) => {
   const [expanded, setExpanded] = React.useState(false);
 
+  if (label === "Produtos") {
+    const items = value.split("\n").filter(Boolean);
+    return (
+      <ul className="mt-2 space-y-1 text-sm leading-6 text-zinc-200 list-disc list-inside">
+        {items.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+    );
+  }
+
   if (label !== "Marcas") {
     return <p className="mt-2 text-sm leading-6 text-zinc-200">{value}</p>;
   }
