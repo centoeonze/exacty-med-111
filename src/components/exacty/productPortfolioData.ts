@@ -1,4 +1,4 @@
-import acido from "@/assets/optimized/acido-hialuronico.webp";
+import acido from "@/assets/Preenchedores copiar 2.png";
 import dermaPen from "@/assets/optimized/derma-pen.webp";
 import dermaRoller from "@/assets/optimized/dermaroller1.webp";
 import soro from "@/assets/optimized/soro.webp";
@@ -145,7 +145,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
   },
   {
     title: "Preenchedores",
-    image: { src: acido, width: 1100, height: 1135 },
+    image: { src: acido, width: 826, height: 750 },
     description: "Preenchedores para estética avançada.",
     canApply: ensureProfessionals(["Biomédicos", "Dentistas", "Médicos"]),
     canBuy: ["Clínicas", "Profissionais habilitados", "Pessoa jurídica da área"],
@@ -172,8 +172,8 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
     canApply: ensureProfessionals(["Biomédicos", "Dentistas", "Médicos"]),
     canBuy: ["Clínicas", "Profissionais habilitados", "Pessoa jurídica da área"],
     specs: [
-      { label: "Produtos", value: "Rennova Diamond\nIntense\nElleva\nRadiesse Duo Plus\nCientific\nPermanent Facial Implant\nNutriex\nSculptra" },
-      { label: "Categoria", value: "bioestimuladores bioestimulador de colageno rennova diamond intense elleva radiesse duo plus cientific ermanent facial implant nutriex sculptra" },
+      { label: "Produtos", value: "Rennova Diamond Intense\nRennova Elleva 150mg\nRadiesse Duo 1,5mL\nRennova Elleva X 630mg\nCientific Permanent Facial Implant (Nutriex)\nRadiesse Plus 1,5mL\nSculptra 150mg 2 Frascos" },
+      { label: "Categoria", value: "Bioestimulador de Colágeno" },
     ],
   },
   {
