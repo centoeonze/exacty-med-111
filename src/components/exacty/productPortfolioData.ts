@@ -172,7 +172,8 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
     canApply: ensureProfessionals(["Biomédicos", "Dentistas", "Médicos"]),
     canBuy: ["Clínicas", "Profissionais habilitados", "Pessoa jurídica da área"],
     specs: [
-      { label: "Categoria", value: "bioestimuladores bioestimulador de colageno" },
+      { label: "Produtos", value: "Rennova Diamond\nIntense\nElleva\nRadiesse Duo Plus\nCientific\nPermanent Facial Implant\nNutriex\nSculptra" },
+      { label: "Categoria", value: "bioestimuladores bioestimulador de colageno rennova diamond intense elleva radiesse duo plus cientific ermanent facial implant nutriex sculptra" },
     ],
   },
   {

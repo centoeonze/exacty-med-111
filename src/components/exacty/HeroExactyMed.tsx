@@ -61,7 +61,7 @@ const HeroExactyMed = () => (
                 <div className="pointer-events-none absolute inset-x-[6%] bottom-[4%] z-0 h-[118px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(168,135,255,0.12)_0%,rgba(107,70,198,0.09)_34%,rgba(16,9,24,0.06)_58%,rgba(16,9,24,0)_82%)] blur-[48px] sm:h-[132px] md:h-[148px]" />
                 <div className="pointer-events-none absolute left-1/2 bottom-[6.8%] z-[8] h-[62px] w-[82%] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(7,5,11,0.64)_0%,rgba(39,23,60,0.42)_28%,rgba(71,44,106,0.18)_52%,rgba(9,6,15,0)_80%)] blur-[18px] sm:h-[68px] sm:w-[78%] md:h-[74px] md:w-[74%]" />
                 <img
-                  src="/regulatorio/Mockup Produtos.png"
+                  src="/regulatorio/Mockup Produtos (1).png"
                   alt="Linha de produtos Exacty Med"
                   width={2249}
                   height={988}
