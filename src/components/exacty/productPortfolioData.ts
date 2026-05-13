@@ -3,6 +3,7 @@ import dermaPen from "@/assets/optimized/derma-pen.webp";
 import dermaRoller from "@/assets/optimized/dermaroller1.webp";
 import soro from "@/assets/optimized/soro.webp";
 import toxina from "@/assets/optimized/toxina-botulinica.webp";
+import bioestimulador from "@/assets/optimized/bioestimulador.png";
 import skinVibra from "@/assets/skinvibra.webp";
 
 const ensureProfessionals = (roles: string[]) => {
@@ -166,7 +167,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
   },
   {
     title: "Bioestimulador de Colágeno",
-    image: { src: "/regulatorio/bioestimulador-copiar.png", width: 382, height: 694 },
+    image: { src: bioestimulador, width: 382, height: 694 },
     description: "Bioestimuladores de colágeno para profissionais habilitados.",
     canApply: ensureProfessionals(["Biomédicos", "Dentistas", "Médicos"]),
     canBuy: ["Clínicas", "Profissionais habilitados", "Pessoa jurídica da área"],
