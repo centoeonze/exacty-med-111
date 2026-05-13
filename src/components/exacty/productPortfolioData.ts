@@ -172,7 +172,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
     canApply: ensureProfessionals(["Biomédicos", "Dentistas", "Médicos"]),
     canBuy: ["Clínicas", "Profissionais habilitados", "Pessoa jurídica da área"],
     specs: [
-      { label: "Produtos", value: "Rennova Diamond Intense\nRennova Elleva 150mg\nRadiesse Duo 1,5mL\nRennova Elleva X 630mg\nCientific Permanent Facial Implant (Nutriex)\nRadiesse Plus 1,5mL\nSculptra 150mg 2 Frascos" },
+      { label: "Produtos", value: "Rennova Diamond Intense\nRennova Elleva 150mg\nRadiesse Duo 1,5mL\nRennova Elleva X 630mg\nCientific Permanent Facial Implant (Nutriex)\nRadiesse Plus 1,5mL\nSculptra 150mg (2 Frascos)" },
       { label: "Categoria", value: "Bioestimulador de Colágeno" },
     ],
   },
