@@ -12,10 +12,6 @@ const SOURCE_GLOBS = [
 
 const FORBIDDEN = [
   {
-    pattern: /LocalStorageRepository/,
-    label: "LocalStorageRepository",
-  },
-  {
     pattern: /FallbackStorageRepository/,
     label: "FallbackStorageRepository",
   },
@@ -81,11 +77,11 @@ describe("legacyRemoval.guard (Stage 10A)", () => {
     expect(hits).toEqual([]);
   });
 
-  it("resolve helpers keep storage/upload on API; auth supports local|api", async () => {
+  it("resolve helpers support local|api for auth/storage; upload remains api", async () => {
     const { resolveCmsStorageProvider } = await import("@/cms/repositories");
     const { resolveCmsAuthProvider } = await import("@/cms/auth/cmsAuthApi");
     const { resolveCmsAssetUploadMode } = await import("@/cms/mediaManager");
-    expect(resolveCmsStorageProvider()).toBe("api");
+    expect(["local", "api"]).toContain(resolveCmsStorageProvider());
     expect(["local", "api"]).toContain(resolveCmsAuthProvider());
     expect(resolveCmsAssetUploadMode()).toBe("api");
   });

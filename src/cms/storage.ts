@@ -21,6 +21,30 @@ export type CmsExportPayload = {
 export const loadDraft = (): CmsDraft | null => getStorageRepository().loadDraft();
 
 export const saveDraft = (draft: CmsDraft): void => {
+  // #region agent log
+  fetch("http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Debug-Session-Id": "9176a5",
+    },
+    body: JSON.stringify({
+      sessionId: "9176a5",
+      runId: "save-post-fix",
+      hypothesisId: "A",
+      location: "storage.ts:saveDraft",
+      message: "saveDraft invoked",
+      data: {
+        provider:
+          (typeof window !== "undefined" &&
+            (window as unknown as { __CMS_STORAGE_PROVIDER__?: string })
+              .__CMS_STORAGE_PROVIDER__) ||
+          null,
+      },
+      timestamp: Date.now(),
+    }),
+  }).catch(() => {});
+  // #endregion
   getStorageRepository().saveDraft(draft);
 };
 
@@ -30,8 +54,34 @@ export const clearDraft = (): void => {
 
 export const loadPublished = (): CmsPublishedPage | null => getStorageRepository().loadPublished();
 
-export const savePublished = (page: Omit<CmsPublishedPage, "updatedAt">): CmsPublishedPage =>
-  getStorageRepository().savePublished(page);
+export const savePublished = (page: Omit<CmsPublishedPage, "updatedAt">): CmsPublishedPage => {
+  // #region agent log
+  fetch("http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Debug-Session-Id": "9176a5",
+    },
+    body: JSON.stringify({
+      sessionId: "9176a5",
+      runId: "save-post-fix",
+      hypothesisId: "A",
+      location: "storage.ts:savePublished",
+      message: "savePublished invoked",
+      data: {
+        provider:
+          (typeof window !== "undefined" &&
+            (window as unknown as { __CMS_STORAGE_PROVIDER__?: string })
+              .__CMS_STORAGE_PROVIDER__) ||
+          null,
+        htmlLen: page.html?.length ?? 0,
+      },
+      timestamp: Date.now(),
+    }),
+  }).catch(() => {});
+  // #endregion
+  return getStorageRepository().savePublished(page);
+};
 
 export const clearPublished = (): void => {
   getStorageRepository().clearPublished();

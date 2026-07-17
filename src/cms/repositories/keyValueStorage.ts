@@ -174,10 +174,10 @@ export class HttpKeyValueStorage implements IKeyValueStorage {
         },
         body: JSON.stringify({
           sessionId: "9176a5",
-          runId: "post-fix",
+          runId: "save-post-fix",
           hypothesisId: "A",
           location: "keyValueStorage.ts:set",
-          message: "HttpKeyValueStorage POST response",
+          message: "HttpKeyValueStorage POST (should NOT run in local storage mode)",
           data: {
             url,
             key,
