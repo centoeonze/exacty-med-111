@@ -3,7 +3,7 @@
  * Uses the shared Asset Manager (images + PDFs) — no parallel upload flow.
  */
 import type { Editor } from "grapesjs";
-import { fileNameFromSrc, openPdfAssetPicker } from "./mediaManager";
+import { fileNameFromSrc, openPdfAssetPicker, uploadCmsMediaFile } from "./mediaManager";
 
 const isPdfHref = (href: string) =>
   !!href &&
@@ -125,14 +125,22 @@ export const registerPdfDocumentTraits = (editor: Editor) => {
           window.alert("Apenas arquivos PDF (.pdf) são permitidos.");
           return;
         }
-        const reader = new FileReader();
-        reader.onload = () => {
-          const src = String(reader.result);
-          editor.AssetManager.add({ type: "pdf", src, name: file.name });
-          applyPdfToComponent(component, src, file.name);
+        try {
+          const row = await uploadCmsMediaFile(file);
+          editor.AssetManager.add({
+            type: "pdf",
+            src: row.src,
+            name: row.name,
+            assetId: row.assetId,
+          });
+          applyPdfToComponent(component, row.src, row.name);
           refresh();
-        };
-        reader.readAsDataURL(file);
+        } catch (error) {
+          console.error("[cms-pdf] upload failed", error);
+          window.alert(
+            error instanceof Error ? error.message : `Falha ao enviar ${file.name}`,
+          );
+        }
       };
 
       btnRemove.onclick = () => {

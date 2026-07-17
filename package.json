@@ -5,13 +5,24 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:api": "npm run dev --prefix server",
+    "dev:cms-api": "vite --mode api",
+    "dev:staging": "vite --mode staging",
+    "seed:kv-from-domain": "npm run seed:kv-from-domain --prefix server",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:api": "npm run test --prefix server",
+    "test:playwright:baseline": "npx playwright test --config=tests/playwright-baseline.config.ts tests/compatibility-baseline.spec.ts",
+    "test:playwright:api": "npx playwright test --config=tests/playwright-api.config.ts tests/compatibility-api-provider.spec.ts",
+    "test:playwright:api-provider": "npx playwright test --config=tests/playwright-staging.config.ts tests/playwright-api-provider.spec.ts",
+    "migrate:local-storage": "npm run migrate:local-storage --prefix server --",
+    "migrate:legacy-assets": "npm run migrate:legacy-assets --prefix server --"
   },
+
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-accordion": "^1.2.11",

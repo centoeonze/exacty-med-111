@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// Generic key/value store — primary CMS persistence for draft / published / media catalog.
+/// Keys: exacty-cms-draft, exacty-cms-published, exacty-cms-media-assets.
+/// Domain models (Page/Version) exist for seeding, migration, and future dual-write; editor I/O uses this table today.
+model StorageEntry {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Site / CMS workspace (Exacty Med is one project today).
+model Project {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  pages    Page[]
+  versions Version[]
+  assets   Asset[]
+}
+
+/// Editable page. `content` holds GrapesJS project JSON (working copy).
+model Page {
+  id        String   @id @default(uuid())
+  projectId String
+  name      String
+  slug      String
+  content   Json?
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([projectId, slug])
+  @@index([projectId])
+}
+
+/// Snapshots: draft / published (and future statuses).
+/// Published payload shape today: { html, css, updatedAt }.
+model Version {
+  id        String   @id @default(uuid())
+  projectId String
+  pageId    String?
+  status    String
+  label     String?
+  content   Json
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([projectId, status])
+  @@index([pageId])
+}
+
+/// Media metadata only — store files by url/storagePath, not base64 in page JSON.
+model Asset {
+  id          String  @id @default(uuid())
+  projectId   String
+  type        String
+  name        String?
+  url         String
+  storagePath String?
+  mimeType    String?
+  sizeBytes   Int?
+  metadata    Json?
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId, type])
+}
+
+/// CMS users — AuthService login (bcrypt passwordHash + HttpOnly session cookie).
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  username     String?  @unique
+  passwordHash String?
+  role         String   @default("editor")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

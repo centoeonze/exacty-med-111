@@ -26,7 +26,6 @@ import {
   savePublished,
   type CmsDraft,
 } from "./storage";
-
 type StatusTone = "idle" | "ok" | "err";
 
 type GrapesEditorProps = {

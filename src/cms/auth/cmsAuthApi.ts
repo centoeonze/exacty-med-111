@@ -1,10 +1,29 @@
-/** Client helpers for CMS auth API (credentials never leave the server). */
+/** Client helpers for CMS auth — Express API only (Stage 10A). */
 
-export type CmsSessionState = { authenticated: boolean };
+export type CmsSessionState = {
+  authenticated: boolean;
+  user?: {
+    id: string;
+    email: string;
+    username: string | null;
+    role: string;
+  };
+};
 
 export type CmsLoginResult =
   | { ok: true }
   | { ok: false; error: string };
+
+/** Stage 10A — Auth API is the only provider. */
+export type CmsAuthProviderMode = "api";
+
+export const resolveCmsAuthProvider = (): CmsAuthProviderMode => "api";
+
+const AUTH = {
+  login: "/api/auth/login",
+  logout: "/api/auth/logout",
+  session: "/api/auth/me",
+} as const;
 
 const jsonFetch = async <T>(url: string, init?: RequestInit): Promise<T> => {
   const res = await fetch(url, {
@@ -24,7 +43,11 @@ const jsonFetch = async <T>(url: string, init?: RequestInit): Promise<T> => {
 
 export const fetchCmsSession = async (): Promise<CmsSessionState> => {
   try {
-    return await jsonFetch<CmsSessionState>("/api/cms-auth/session");
+    const data = await jsonFetch<CmsSessionState>(AUTH.session);
+    return {
+      authenticated: Boolean(data.authenticated),
+      user: data.user,
+    };
   } catch {
     return { authenticated: false };
   }
@@ -32,7 +55,7 @@ export const fetchCmsSession = async (): Promise<CmsSessionState> => {
 
 export const loginCms = async (username: string, password: string): Promise<CmsLoginResult> => {
   try {
-    await jsonFetch<{ ok: boolean }>("/api/cms-auth/login", {
+    await jsonFetch<{ ok: boolean }>(AUTH.login, {
       method: "POST",
       body: JSON.stringify({ username, password }),
     });
@@ -48,7 +71,7 @@ export const loginCms = async (username: string, password: string): Promise<CmsL
 
 export const logoutCms = async () => {
   try {
-    await jsonFetch<{ ok: boolean }>("/api/cms-auth/logout", { method: "POST" });
+    await jsonFetch<{ ok: boolean }>(AUTH.logout, { method: "POST" });
   } catch {
     // Session cleared client-side regardless of network errors.
   }

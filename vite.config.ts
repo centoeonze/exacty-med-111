@@ -2,7 +2,6 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
-import { cmsAuthPlugin } from "./vite-plugin-cms-auth";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -12,8 +11,20 @@ export default defineConfig(({ mode }) => ({
     hmr: {
       overlay: false,
     },
+    proxy: {
+      // Stage 10A — all /api/* (storage, auth, assets) → Express
+      "/api": {
+        target: "http://localhost:3001",
+        changeOrigin: true,
+      },
+      // Stage 8 — uploaded assets served by Express
+      "/uploads": {
+        target: "http://localhost:3001",
+        changeOrigin: true,
+      },
+    },
   },
-  plugins: [react(), cmsAuthPlugin(), mode === "development" && componentTagger()].filter(Boolean),
+  plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

@@ -1,13 +1,15 @@
-export const DRAFT_KEY = "exacty-cms-draft";
-export const PUBLISHED_KEY = "exacty-cms-published";
+/**
+ * Public CMS persistence façade.
+ * Delegates to IStorageRepository — callers keep the same sync API.
+ */
+import {
+  getStorageRepository,
+  type CmsDraft,
+  type CmsPublishedPage,
+} from "./repositories";
 
-export type CmsDraft = Record<string, unknown>;
-
-export type CmsPublishedPage = {
-  html: string;
-  css: string;
-  updatedAt: string;
-};
+export { DRAFT_KEY, PUBLISHED_KEY } from "./repositories";
+export type { CmsDraft, CmsPublishedPage };
 
 export type CmsExportPayload = {
   version: 1;
@@ -16,47 +18,23 @@ export type CmsExportPayload = {
   exportedAt: string;
 };
 
-export const loadDraft = (): CmsDraft | null => {
-  try {
-    const raw = localStorage.getItem(DRAFT_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw) as CmsDraft;
-  } catch {
-    return null;
-  }
-};
+export const loadDraft = (): CmsDraft | null => getStorageRepository().loadDraft();
 
 export const saveDraft = (draft: CmsDraft): void => {
-  localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+  getStorageRepository().saveDraft(draft);
 };
 
 export const clearDraft = (): void => {
-  localStorage.removeItem(DRAFT_KEY);
+  getStorageRepository().clearDraft();
 };
 
-export const loadPublished = (): CmsPublishedPage | null => {
-  try {
-    const raw = localStorage.getItem(PUBLISHED_KEY);
-    if (!raw) return null;
-    const data = JSON.parse(raw) as CmsPublishedPage;
-    if (!data?.html) return null;
-    return data;
-  } catch {
-    return null;
-  }
-};
+export const loadPublished = (): CmsPublishedPage | null => getStorageRepository().loadPublished();
 
-export const savePublished = (page: Omit<CmsPublishedPage, "updatedAt">): CmsPublishedPage => {
-  const payload: CmsPublishedPage = {
-    ...page,
-    updatedAt: new Date().toISOString(),
-  };
-  localStorage.setItem(PUBLISHED_KEY, JSON.stringify(payload));
-  return payload;
-};
+export const savePublished = (page: Omit<CmsPublishedPage, "updatedAt">): CmsPublishedPage =>
+  getStorageRepository().savePublished(page);
 
 export const clearPublished = (): void => {
-  localStorage.removeItem(PUBLISHED_KEY);
+  getStorageRepository().clearPublished();
 };
 
 export const exportCmsJson = (draft: CmsDraft, includePublished = true): void => {

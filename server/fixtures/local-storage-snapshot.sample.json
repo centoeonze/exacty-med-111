@@ -1,0 +1,22 @@
+{
+  "draft": {
+    "pages": [{ "name": "Home", "frames": [{ "component": { "type": "wrapper" } }] }]
+  },
+  "published": {
+    "html": "<main><h1>Exacty Med</h1></main>",
+    "css": "main{padding:1rem}",
+    "updatedAt": "2026-07-17T00:00:00.000Z"
+  },
+  "mediaAssets": [
+    {
+      "type": "image",
+      "name": "dot.png",
+      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
+    },
+    {
+      "type": "pdf",
+      "name": "sample.pdf",
+      "src": "https://example.com/sample.pdf"
+    }
+  ]
+}

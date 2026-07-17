@@ -2,23 +2,67 @@
  * Extends GrapesJS Asset Manager with PDF documents alongside images.
  * Reuses the same AssetManager (no parallel media library).
  * Catalog persistence uses a dedicated key — does not alter draft/published save.
+ *
+ * Stage 10A: uploads only via POST /api/assets/upload → AssetService (no base64 fallback).
  */
 import type { Editor } from "grapesjs";
+import { MEDIA_ASSETS_KEY, getStorageRepository } from "./repositories";
 
-export const MEDIA_ASSETS_KEY = "exacty-cms-media-assets";
+export { MEDIA_ASSETS_KEY };
+
+export type CmsAssetUploadMode = "api";
+
+/** Stage 10A — Asset API is the only upload path. */
+export const resolveCmsAssetUploadMode = (): CmsAssetUploadMode => "api";
 
 const isPdfFile = (file: File) =>
   file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
 
 const isImageFile = (file: File) => file.type.startsWith("image/");
 
-const readAsDataUrl = (file: File) =>
-  new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result));
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
+type UploadedAssetRow = {
+  type: string;
+  src: string;
+  name: string;
+  assetId?: string;
+};
+
+const uploadFileViaApi = async (file: File, type: string): Promise<UploadedAssetRow> => {
+  const body = new FormData();
+  body.append("file", file, file.name);
+  body.append("type", type);
+  const res = await fetch("/api/assets/upload", {
+    method: "POST",
+    credentials: "same-origin",
+    body,
   });
+  const data = (await res.json().catch(() => ({}))) as {
+    ok?: boolean;
+    asset?: { id: string; url: string; name?: string | null };
+    error?: string;
+  };
+  if (!res.ok || !data.asset?.url) {
+    throw new Error(data.error || `Upload failed (${res.status})`);
+  }
+  if (data.asset.url.startsWith("data:") || data.asset.url.startsWith("blob:")) {
+    throw new Error("Invalid asset URL from API (embedded payloads are not allowed)");
+  }
+  return {
+    type,
+    src: data.asset.url,
+    name: data.asset.name || file.name,
+    assetId: data.asset.id,
+  };
+};
+
+/** Upload one file via Asset API only. */
+export const uploadCmsMediaFile = async (file: File): Promise<UploadedAssetRow> => {
+  const type = isPdfFile(file) ? "pdf" : isImageFile(file) ? "image" : "";
+  if (!type) {
+    throw new Error(`Arquivo não suportado: ${file.name}. Envie apenas imagens ou PDF (.pdf).`);
+  }
+  return uploadFileViaApi(file, type);
+};
 
 export const fileNameFromSrc = (src: string, fallback = "documento.pdf") => {
   try {
@@ -31,24 +75,17 @@ export const fileNameFromSrc = (src: string, fallback = "documento.pdf") => {
   }
 };
 
-export const loadPersistedMediaAssets = (): Array<Record<string, unknown>> => {
-  try {
-    const raw = localStorage.getItem(MEDIA_ASSETS_KEY);
-    if (!raw) return [];
-    const data = JSON.parse(raw);
-    return Array.isArray(data) ? data : [];
-  } catch {
-    return [];
-  }
-};
+export const loadPersistedMediaAssets = (): Array<Record<string, unknown>> =>
+  getStorageRepository().loadMediaAssets();
 
 export const persistMediaAssets = (editor: Editor) => {
   const assets = editor.AssetManager.getAll().map((asset) => ({
     type: asset.get("type"),
     src: asset.get("src"),
     name: asset.get("name"),
+    assetId: asset.get("assetId") || undefined,
   }));
-  localStorage.setItem(MEDIA_ASSETS_KEY, JSON.stringify(assets));
+  getStorageRepository().saveMediaAssets(assets);
 };
 
 const isPdfAssetSrc = (src: string) =>
@@ -58,26 +95,33 @@ const isPdfAssetSrc = (src: string) =>
     /\.pdf($|\?|#)/i.test(src));
 
 /** Same catalog as uploads: AssetManager + exacty-cms-media-assets (deduped by src). */
-export const getUploadedPdfLibrary = (editor: Editor): Array<{ src: string; name: string }> => {
-  const bySrc = new Map<string, { src: string; name: string }>();
+export const getUploadedPdfLibrary = (
+  editor: Editor,
+): Array<{ src: string; name: string; assetId?: string }> => {
+  const bySrc = new Map<string, { src: string; name: string; assetId?: string }>();
 
-  const put = (src: string, name: string) => {
+  const put = (src: string, name: string, assetId?: string) => {
     if (!isPdfAssetSrc(src)) return;
     const label = (name || fileNameFromSrc(src)).trim() || "documento.pdf";
-    if (!bySrc.has(src)) bySrc.set(src, { src, name: label });
+    if (!bySrc.has(src)) bySrc.set(src, { src, name: label, assetId });
   };
 
   editor.AssetManager.getAll().forEach((asset) => {
     const src = String(asset.get("src") || "");
     const type = String(asset.get("type") || "");
+    const assetId = asset.get("assetId") ? String(asset.get("assetId")) : undefined;
     if (type === "pdf" || isPdfAssetSrc(src)) {
-      put(src, String(asset.get("name") || ""));
+      put(src, String(asset.get("name") || ""), assetId);
     }
   });
 
   loadPersistedMediaAssets().forEach((row) => {
     if (row.type === "pdf" && row.src) {
-      put(String(row.src), String(row.name || ""));
+      put(
+        String(row.src),
+        String(row.name || ""),
+        row.assetId ? String(row.assetId) : undefined,
+      );
     }
   });
 
@@ -112,24 +156,50 @@ const unlinkPdfFromComponents = (editor: Editor, src: string) => {
   visit(wrapper as Parameters<typeof visit>[0]);
 };
 
+const deleteRemoteAsset = async (assetId: string) => {
+  try {
+    await fetch(`/api/assets/${encodeURIComponent(assetId)}`, {
+      method: "DELETE",
+      credentials: "same-origin",
+    });
+  } catch (error) {
+    console.warn("[cms-assets] DELETE /api/assets failed", assetId, error);
+  }
+};
+
 /**
- * Remove a PDF from the same storage used by upload (AssetManager → exacty-cms-media-assets)
- * and clear any component that still references it.
+ * Remove a PDF from AssetManager + KV catalog.
+ * When assetId is known, also DELETE /api/assets/:id (Stage 9A).
  */
 export const deletePdfFromLibrary = (editor: Editor, src: string) => {
   if (!src) return;
 
   const am = editor.AssetManager;
   const matches = am.getAll().filter((asset) => String(asset.get("src") || "") === src);
+
+  const assetIds = new Set<string>();
+  matches.forEach((asset) => {
+    const id = asset.get("assetId");
+    if (id) assetIds.add(String(id));
+  });
+  loadPersistedMediaAssets().forEach((row) => {
+    if (String(row.src || "") === src && row.assetId) {
+      assetIds.add(String(row.assetId));
+    }
+  });
+
   matches.forEach((asset) => am.remove(asset));
 
   if (matches.length === 0) {
-    // Entry existed only in the persisted catalog.
     const remaining = loadPersistedMediaAssets().filter((row) => String(row.src || "") !== src);
-    localStorage.setItem(MEDIA_ASSETS_KEY, JSON.stringify(remaining));
+    getStorageRepository().saveMediaAssets(remaining);
   } else {
     persistMediaAssets(editor);
   }
+
+  assetIds.forEach((id) => {
+    void deleteRemoteAsset(id);
+  });
 
   unlinkPdfFromComponents(editor, src);
 };
@@ -216,7 +286,7 @@ const renderPdfLibraryList = (
   });
 };
 
-/** Biblioteca dos PDFs já enviados (mesma fonte do Enviar PDF). Upload flow unchanged. */
+/** Biblioteca dos PDFs já enviados (mesma fonte do Enviar PDF). */
 export const openPdfAssetPicker = (
   editor: Editor,
   onSelect: (src: string, name: string) => void,
@@ -247,7 +317,8 @@ export const openPdfAssetPicker = (
   header.append(title, btnClose);
 
   const listWrap = document.createElement("div");
-  listWrap.style.cssText = "overflow-y:auto;padding:10px 12px 14px;display:flex;flex-direction:column;gap:8px;";
+  listWrap.style.cssText =
+    "overflow-y:auto;padding:10px 12px 14px;display:flex;flex-direction:column;gap:8px;";
 
   renderPdfLibraryList(listWrap, editor, onSelect);
 
@@ -270,7 +341,8 @@ export const openPdfAssetPicker = (
 };
 
 export const getAssetManagerInitConfig = () => ({
-  embedAsBase64: true,
+  // Stage 10A — files live on /uploads via AssetService (no base64 embedding).
+  embedAsBase64: false,
   upload: false as const,
   multiUpload: true,
   assets: loadPersistedMediaAssets(),
@@ -286,17 +358,19 @@ export const getAssetManagerInitConfig = () => ({
 
     const data: Array<Record<string, unknown>> = [];
     for (const file of Array.from(list)) {
-      if (isPdfFile(file)) {
-        const src = await readAsDataUrl(file);
-        data.push({ type: "pdf", src, name: file.name });
-        continue;
+      try {
+        if (!isPdfFile(file) && !isImageFile(file)) {
+          window.alert(`Arquivo não suportado: ${file.name}. Envie apenas imagens ou PDF (.pdf).`);
+          continue;
+        }
+        const row = await uploadCmsMediaFile(file);
+        data.push(row);
+      } catch (error) {
+        console.error("[cms-assets] upload failed", error);
+        window.alert(
+          error instanceof Error ? error.message : `Falha ao enviar ${file.name}`,
+        );
       }
-      if (isImageFile(file)) {
-        const src = await readAsDataUrl(file);
-        data.push({ type: "image", src, name: file.name });
-        continue;
-      }
-      window.alert(`Arquivo não suportado: ${file.name}. Envie apenas imagens ou PDF (.pdf).`);
     }
 
     if (data.length) clb?.({ data });
@@ -344,6 +418,7 @@ export const registerPdfAssetType = (editor: Editor) => {
             type: "pdf",
             src,
             name: (value as { name?: string }).name || fileNameFromSrc(src),
+            assetId: (value as { assetId?: string }).assetId,
           };
         }
       }
