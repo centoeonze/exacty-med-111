@@ -21,7 +21,26 @@ export type CmsExportPayload = {
 export const loadDraft = (): CmsDraft | null => getStorageRepository().loadDraft();
 
 export const saveDraft = (draft: CmsDraft): void => {
-  getStorageRepository().saveDraft(draft);
+  // #region agent log
+  const repo = getStorageRepository();
+  fetch("http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Debug-Session-Id": "9176a5",
+    },
+    body: JSON.stringify({
+      sessionId: "9176a5",
+      runId: "trace-full",
+      hypothesisId: "TRACE",
+      location: "storage.ts:saveDraft",
+      message: "facade saveDraft → repository",
+      data: { repoName: repo.constructor.name },
+      timestamp: Date.now(),
+    }),
+  }).catch(() => {});
+  // #endregion
+  repo.saveDraft(draft);
 };
 
 export const clearDraft = (): void => {
@@ -30,8 +49,32 @@ export const clearDraft = (): void => {
 
 export const loadPublished = (): CmsPublishedPage | null => getStorageRepository().loadPublished();
 
-export const savePublished = (page: Omit<CmsPublishedPage, "updatedAt">): CmsPublishedPage =>
-  getStorageRepository().savePublished(page);
+export const savePublished = (page: Omit<CmsPublishedPage, "updatedAt">): CmsPublishedPage => {
+  // #region agent log
+  const repo = getStorageRepository();
+  fetch("http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Debug-Session-Id": "9176a5",
+    },
+    body: JSON.stringify({
+      sessionId: "9176a5",
+      runId: "trace-full",
+      hypothesisId: "TRACE",
+      location: "storage.ts:savePublished",
+      message: "facade savePublished → repository",
+      data: {
+        repoName: repo.constructor.name,
+        htmlLen: page.html?.length ?? 0,
+        cssLen: page.css?.length ?? 0,
+      },
+      timestamp: Date.now(),
+    }),
+  }).catch(() => {});
+  // #endregion
+  return repo.savePublished(page);
+};
 
 export const clearPublished = (): void => {
   getStorageRepository().clearPublished();

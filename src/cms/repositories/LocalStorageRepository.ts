@@ -42,6 +42,24 @@ export class LocalStorageRepository implements IStorageRepository {
   }
 
   saveDraft(draft: CmsDraft): void {
+    // #region agent log
+    fetch("http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Session-Id": "9176a5",
+      },
+      body: JSON.stringify({
+        sessionId: "9176a5",
+        runId: "trace-full",
+        hypothesisId: "TRACE",
+        location: "LocalStorageRepository.saveDraft",
+        message: "localStorage setItem draft",
+        data: { key: DRAFT_KEY },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
     writeJson(DRAFT_KEY, draft);
   }
 
@@ -60,6 +78,28 @@ export class LocalStorageRepository implements IStorageRepository {
       ...page,
       updatedAt: new Date().toISOString(),
     };
+    // #region agent log
+    fetch("http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Session-Id": "9176a5",
+      },
+      body: JSON.stringify({
+        sessionId: "9176a5",
+        runId: "trace-full",
+        hypothesisId: "TRACE",
+        location: "LocalStorageRepository.savePublished",
+        message: "localStorage setItem published",
+        data: {
+          key: PUBLISHED_KEY,
+          htmlLen: payload.html.length,
+          cssLen: payload.css.length,
+        },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
     writeJson(PUBLISHED_KEY, payload);
     return payload;
   }
