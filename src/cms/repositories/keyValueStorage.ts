@@ -113,6 +113,30 @@ export class HttpKeyValueStorage implements IKeyValueStorage {
     const text = xhr.responseText || "";
     const contentType = xhr.getResponseHeader("Content-Type");
     if (xhr.status < 200 || xhr.status >= 300) {
+      // #region agent log
+      fetch("http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Debug-Session-Id": "9176a5",
+        },
+        body: JSON.stringify({
+          sessionId: "9176a5",
+          runId: "pre-fix",
+          hypothesisId: "C",
+          location: "keyValueStorage.ts:HttpKeyValueStorage.set",
+          message: "ApiStorage POST failed",
+          data: {
+            key,
+            url,
+            status: xhr.status,
+            contentType: contentType ?? null,
+            bodyPrefix: String(text).slice(0, 80),
+          },
+          timestamp: Date.now(),
+        }),
+      }).catch(() => {});
+      // #endregion
       throw new Error(`[ApiStorage] POST ${key} failed with status ${xhr.status}`);
     }
     if (isHtmlOrNonJsonBody(text, contentType)) {

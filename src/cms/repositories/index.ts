@@ -24,20 +24,74 @@ export const resolveCmsStorageProvider = (): CmsStorageProviderMode => {
     CMS_STORAGE_PROVIDER?: string;
     STORAGE_PROVIDER?: string;
   };
-  return resolveCmsStorageProviderFrom(
+  const resolved = resolveCmsStorageProviderFrom(
     injected ??
       meta.VITE_CMS_STORAGE_PROVIDER ??
       meta.VITE_STORAGE_PROVIDER ??
       meta.CMS_STORAGE_PROVIDER ??
       meta.STORAGE_PROVIDER,
   );
+  // #region agent log
+  fetch("http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Debug-Session-Id": "9176a5",
+    },
+    body: JSON.stringify({
+      sessionId: "9176a5",
+      runId: "post-fix",
+      hypothesisId: "A",
+      location: "repositories/index.ts:resolveCmsStorageProvider",
+      message: "storage provider resolved",
+      data: {
+        injected: injected ?? null,
+        metaVite: meta.VITE_CMS_STORAGE_PROVIDER ?? null,
+        metaViteAlt: meta.VITE_STORAGE_PROVIDER ?? null,
+        resolved,
+        mode: import.meta.env.MODE,
+      },
+      timestamp: Date.now(),
+    }),
+  }).catch(() => {});
+  // #endregion
+  return resolved;
 };
 
 /** Factory used by the app and by provider tests. */
 export const createStorageRepository = (
   mode: CmsStorageProviderMode = resolveCmsStorageProvider(),
-): IStorageRepository =>
-  mode === "api" ? new ApiStorageRepository() : new LocalStorageRepository();
+): IStorageRepository => {
+  const repo =
+    mode === "api" ? new ApiStorageRepository() : new LocalStorageRepository();
+  // Acceptance / deploy diagnostics (static Hostinger must show local).
+  // eslint-disable-next-line no-console
+  console.info(`Storage Provider: ${mode}`);
+  // eslint-disable-next-line no-console
+  console.info(`Repository: ${repo.constructor.name}`);
+  // #region agent log
+  fetch("http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Debug-Session-Id": "9176a5",
+    },
+    body: JSON.stringify({
+      sessionId: "9176a5",
+      runId: "post-fix",
+      hypothesisId: "B",
+      location: "repositories/index.ts:createStorageRepository",
+      message: "repository factory selected",
+      data: {
+        mode,
+        className: repo.constructor.name,
+      },
+      timestamp: Date.now(),
+    }),
+  }).catch(() => {});
+  // #endregion
+  return repo;
+};
 
 /** One repository instance for the entire application lifecycle. */
 const repository = createStorageRepository();
