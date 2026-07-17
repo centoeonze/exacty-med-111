@@ -129,6 +129,24 @@ const GrapesEditor = ({ onLogout }: GrapesEditorProps) => {
     });
 
     try {
+      // #region agent log
+      fetch("http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Debug-Session-Id": "9176a5",
+        },
+        body: JSON.stringify({
+          sessionId: "9176a5",
+          runId: "post-fix",
+          hypothesisId: "A",
+          location: "GrapesEditor.tsx:beforeLoadDraft",
+          message: "About to loadDraft after editor init",
+          data: { path: window.location.pathname },
+          timestamp: Date.now(),
+        }),
+      }).catch(() => {});
+      // #endregion
       const draft = loadDraft();
       // Restore GrapesJS tree when possible; skip live-only React shell drafts.
       if (draft && isDraftEditableInGrapes(draft)) {
@@ -137,7 +155,33 @@ const GrapesEditor = ({ onLogout }: GrapesEditorProps) => {
         editor.setComponents(getDefaultPageHtml());
       }
     } catch (error) {
+      // #region agent log
+      fetch("http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Debug-Session-Id": "9176a5",
+        },
+        body: JSON.stringify({
+          sessionId: "9176a5",
+          runId: "post-fix",
+          hypothesisId: "A",
+          location: "GrapesEditor.tsx:loadDraftCatch",
+          message: "loadDraft/init content threw",
+          data: {
+            errorName: error instanceof Error ? error.name : typeof error,
+            errorMessage: error instanceof Error ? error.message : String(error),
+          },
+          timestamp: Date.now(),
+        }),
+      }).catch(() => {});
+      // #endregion
       console.error("[Exacty CMS] Falha ao carregar conteúdo inicial", error);
+      setStatus({
+        tone: "err",
+        message:
+          "Não foi possível carregar o rascunho da API. O editor abriu vazio — verifique se o backend Express está publicado.",
+      });
       try {
         editor.setComponents(getDefaultPageHtml());
       } catch (fallbackError) {

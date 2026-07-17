@@ -104,7 +104,65 @@ const jsonFetch = async <T>(url: string, init?: RequestInit): Promise<T> => {
     headers: { "Content-Type": "application/json", ...(init?.headers || {}) },
     ...init,
   });
-  const data = (await res.json().catch(() => ({}))) as T & { error?: string };
+  const rawText = await res.text();
+  // #region agent log
+  fetch("http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Debug-Session-Id": "9176a5",
+    },
+    body: JSON.stringify({
+      sessionId: "9176a5",
+      runId: "pre-fix",
+      hypothesisId: "B",
+      location: "cmsAuthApi.ts:jsonFetch",
+      message: "Auth API response before JSON parse",
+      data: {
+        url,
+        method: init?.method || "GET",
+        status: res.status,
+        contentType: res.headers.get("Content-Type"),
+        looksHtml: /^\s*</.test(rawText),
+        bodyPrefix: rawText.slice(0, 80),
+        authProvider: resolveCmsAuthProvider(),
+      },
+      timestamp: Date.now(),
+    }),
+  }).catch(() => {});
+  // #endregion
+  let data = {} as T & { error?: string };
+  try {
+    data = (rawText ? JSON.parse(rawText) : {}) as T & { error?: string };
+  } catch (parseError) {
+    // #region agent log
+    fetch("http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Session-Id": "9176a5",
+      },
+      body: JSON.stringify({
+        sessionId: "9176a5",
+        runId: "pre-fix",
+        hypothesisId: "B",
+        location: "cmsAuthApi.ts:jsonFetch:parseError",
+        message: "Auth JSON parse failed",
+        data: {
+          url,
+          status: res.status,
+          error: String(parseError),
+          bodyPrefix: rawText.slice(0, 80),
+        },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
+    throw Object.assign(new Error("Resposta de autenticação inválida (não JSON)."), {
+      status: res.status,
+      data: { error: "Resposta de autenticação inválida (não JSON)." },
+    });
+  }
   if (!res.ok) {
     throw Object.assign(new Error((data as { error?: string }).error || "Falha na autenticação."), {
       status: res.status,
