@@ -1,0 +1,415 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #05020b;
+  color: #fff;
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.cms-page {
+  background: #05020b;
+  color: #fff;
+  min-height: 100%;
+}
+
+.cms-section {
+  position: relative;
+  padding: 4rem 1.5rem;
+  overflow: hidden;
+}
+
+.cms-container {
+  position: relative;
+  z-index: 1;
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.cms-eyebrow {
+  margin: 0 0 1rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(221, 214, 254, 0.7);
+  text-align: center;
+}
+
+.cms-title {
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  text-align: center;
+  background: linear-gradient(90deg, #fff, #e9defd, #a78bfa);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.cms-subtitle {
+  margin: 1.25rem auto 0;
+  max-width: 42rem;
+  text-align: center;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: rgba(161, 161, 170, 0.95);
+}
+
+.cms-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  padding: 1rem 1.5rem 0;
+  background: linear-gradient(180deg, rgba(5, 2, 11, 0.92), rgba(5, 2, 11, 0.55) 70%, transparent);
+}
+
+.cms-navbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0.75rem 1.25rem;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(18, 12, 28, 0.72);
+  backdrop-filter: blur(16px);
+}
+
+.cms-navbar-logo {
+  height: 2rem;
+  width: auto;
+}
+
+.cms-nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  justify-content: center;
+}
+
+.cms-nav-links a {
+  color: rgba(255, 255, 255, 0.78);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+}
+
+.cms-nav-links a:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.cms-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(167, 139, 250, 0.45);
+  background: linear-gradient(135deg, #6f3ccf, #8b5cf6);
+  color: #fff !important;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 12px 40px rgba(111, 60, 207, 0.35);
+}
+
+.cms-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff !important;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.cms-hero {
+  padding: 6rem 1.5rem 3.5rem;
+  text-align: center;
+}
+
+.cms-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  border: 1px solid rgba(203, 182, 255, 0.25);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.8rem;
+}
+
+.cms-hero h1 {
+  margin: 1.25rem auto 0;
+  max-width: 48rem;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  line-height: 1.02;
+  color: #fff;
+}
+
+.cms-hero-accent {
+  background: linear-gradient(90deg, #cbb6ff, #a97cff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.cms-hero-image {
+  display: block;
+  width: 100%;
+  max-width: 48rem;
+  margin: 1.5rem auto 0;
+  height: auto;
+}
+
+.cms-hero p {
+  margin: 1rem auto 0;
+  max-width: 42rem;
+  color: rgba(207, 200, 218, 0.86);
+  font-size: 1.05rem;
+  line-height: 1.65;
+}
+
+.cms-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-top: 1.75rem;
+}
+
+.cms-hero-note {
+  margin-top: 1rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.cms-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-top: 1.25rem;
+}
+
+.cms-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.cms-grid-2 {
+  display: grid;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.cms-grid-3 {
+  display: grid;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.cms-card {
+  padding: 1.35rem 1.25rem;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(10px);
+}
+
+.cms-card h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.cms-card p {
+  margin: 0.55rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: rgba(161, 161, 170, 0.95);
+}
+
+.cms-card a {
+  display: inline-block;
+  margin-top: 0.85rem;
+  color: #c4b5fd;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.cms-portfolio-card {
+  text-align: center;
+  overflow: hidden;
+}
+
+.cms-portfolio-card img {
+  width: 100%;
+  max-width: 180px;
+  height: 180px;
+  object-fit: contain;
+  margin: 0 auto 1rem;
+  display: block;
+}
+
+.cms-testimonial {
+  min-height: 140px;
+}
+
+.cms-testimonial .cms-quote {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: rgba(228, 228, 231, 0.9);
+}
+
+.cms-testimonial .cms-author {
+  margin: 1rem 0 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #c4b5fd;
+}
+
+.cms-faq-item {
+  margin-top: 0.75rem;
+}
+
+.cms-faq-item h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #fff;
+}
+
+.cms-faq-item p {
+  margin: 0.5rem 0 0;
+  color: rgba(161, 161, 170, 0.95);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.cms-cta-box {
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  border-radius: 1.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 24px 80px rgba(90, 48, 210, 0.18);
+}
+
+.cms-cta-box h2 {
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(1.2rem, 2.5vw, 1.7rem);
+  font-weight: 600;
+  letter-spacing: -0.028em;
+  line-height: 1.2;
+  color: #fff;
+}
+
+.cms-cta-box p {
+  margin: 1rem auto 0;
+  max-width: 38rem;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.6;
+}
+
+.cms-cta-box .cms-hero-actions {
+  margin-top: 1.5rem;
+}
+
+.cms-footer {
+  padding: 2rem 1.5rem 2.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.cms-footer-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.cms-footer img {
+  height: 2.5rem;
+  width: auto;
+}
+
+.cms-footer p,
+.cms-footer a {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  text-decoration: none;
+}
+
+.cms-footer a:hover {
+  color: #ddd6fe;
+}
+
+.cms-footer-label {
+  margin: 0 0 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.cms-authority-photo {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 1rem;
+  margin-bottom: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 768px) {
+  .cms-nav-links {
+    display: none;
+  }
+
+  .cms-section {
+    padding: 3rem 1.15rem;
+  }
+}

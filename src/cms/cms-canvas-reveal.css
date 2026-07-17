@@ -1,0 +1,51 @@
+/* Reveal Framer Motion SSR initial states inside the GrapesJS canvas only. */
+[style*="opacity:0"],
+[style*="opacity: 0"] {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/*
+ * GrapesJS canvas only (not public site).
+ * Edit mode: pause Home testimonials marquee.
+ * Preview mode (body[data-exacty-gjs-mode="preview"]): run the same CSS animation.
+ */
+body[data-exacty-gjs-mode="edit"] .testimonials-marquee-row {
+  animation-play-state: paused !important;
+}
+
+body[data-exacty-gjs-mode="preview"] .testimonials-marquee-row {
+  animation: testimonialsMarquee var(--marquee-duration, 176s) linear infinite !important;
+  animation-play-state: running !important;
+  will-change: transform;
+  /* Same as published site: animation owns position — no manual pan. */
+  touch-action: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  pointer-events: auto;
+}
+
+body[data-exacty-gjs-mode="preview"] .testimonials-marquee-shell {
+  overflow: hidden !important;
+  overflow-x: hidden !important;
+  touch-action: none !important;
+  overscroll-behavior: none !important;
+  cursor: default !important;
+  -webkit-overflow-scrolling: auto !important;
+}
+
+/* Same Home hover pause in GrapesJS Preview (beats the running !important above). */
+body[data-exacty-gjs-mode="preview"] .testimonials-marquee-shell:hover .testimonials-marquee-row {
+  animation-play-state: paused !important;
+}
+
+/* Live React Home block always uses production marquee when in view. */
+[data-exacty-live-root] .testimonials-marquee-row {
+  animation: testimonialsMarquee var(--marquee-duration, 176s) linear infinite !important;
+  animation-play-state: running !important;
+  will-change: transform;
+}
+
+[data-exacty-live-root] .testimonials-marquee-shell:hover .testimonials-marquee-row {
+  animation-play-state: paused !important;
+}
