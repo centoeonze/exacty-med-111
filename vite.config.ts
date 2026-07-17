@@ -12,6 +12,18 @@ export default defineConfig(({ mode }) => {
     .trim()
     .toLowerCase();
   const useLocalAuth = authProvider !== "api";
+  const storageProvider =
+    String(
+      env.VITE_CMS_STORAGE_PROVIDER ||
+        env.CMS_STORAGE_PROVIDER ||
+        env.VITE_STORAGE_PROVIDER ||
+        env.STORAGE_PROVIDER ||
+        "local",
+    )
+      .trim()
+      .toLowerCase() === "api"
+      ? "api"
+      : "local";
 
   return {
     server: {
@@ -42,6 +54,9 @@ export default defineConfig(({ mode }) => {
             password: String(env.CMS_PASSWORD || env.VITE_CMS_PASSWORD || ""),
           })
         : "null",
+      // Bake storage provider at build time (Hostinger builds may omit .env VITE_*).
+      __EXACTY_CMS_STORAGE_PROVIDER__: JSON.stringify(storageProvider),
+      "import.meta.env.VITE_CMS_STORAGE_PROVIDER": JSON.stringify(storageProvider),
     },
     plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
     resolve: {

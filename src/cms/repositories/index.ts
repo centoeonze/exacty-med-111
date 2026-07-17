@@ -14,6 +14,10 @@ export const resolveCmsStorageProviderFrom = (
   String(raw ?? "local").trim().toLowerCase() === "api" ? "api" : "local";
 
 export const resolveCmsStorageProvider = (): CmsStorageProviderMode => {
+  const injected =
+    typeof __EXACTY_CMS_STORAGE_PROVIDER__ !== "undefined"
+      ? __EXACTY_CMS_STORAGE_PROVIDER__
+      : undefined;
   const meta = import.meta.env as ImportMetaEnv & {
     VITE_CMS_STORAGE_PROVIDER?: string;
     VITE_STORAGE_PROVIDER?: string;
@@ -21,7 +25,8 @@ export const resolveCmsStorageProvider = (): CmsStorageProviderMode => {
     STORAGE_PROVIDER?: string;
   };
   return resolveCmsStorageProviderFrom(
-    meta.VITE_CMS_STORAGE_PROVIDER ??
+    injected ??
+      meta.VITE_CMS_STORAGE_PROVIDER ??
       meta.VITE_STORAGE_PROVIDER ??
       meta.CMS_STORAGE_PROVIDER ??
       meta.STORAGE_PROVIDER,

@@ -7,6 +7,7 @@ export default defineConfig({
   define: {
     // Unit tests default to no injected local creds (use VITE_CMS_* stubs instead).
     __EXACTY_CMS_LOCAL_CREDS__: "null",
+    __EXACTY_CMS_STORAGE_PROVIDER__: JSON.stringify("local"),
   },
   test: {
     environment: "jsdom",

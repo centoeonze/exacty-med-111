@@ -23,7 +23,17 @@ const readJson = <T>(key: string): T | null => {
 };
 
 const writeJson = (key: string, value: unknown): void => {
-  localStorage.setItem(key, JSON.stringify(value));
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    const message =
+      error instanceof DOMException && error.name === "QuotaExceededError"
+        ? "Armazenamento do navegador cheio (localStorage). Remova dados antigos ou publique com menos assets embutidos."
+        : error instanceof Error
+          ? error.message
+          : "Falha ao gravar no localStorage.";
+    throw new Error(message);
+  }
 };
 
 export class LocalStorageRepository implements IStorageRepository {
