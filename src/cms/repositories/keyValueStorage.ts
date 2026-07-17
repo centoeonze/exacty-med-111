@@ -117,7 +117,28 @@ export class HttpKeyValueStorage implements IKeyValueStorage {
     }
     // #endregion
     if (xhr.status < 200 || xhr.status >= 300) {
-      throw new Error(`[ApiStorage] GET ${key} failed with status ${xhr.status}`);
+      // #region agent log
+      fetch("http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Debug-Session-Id": "9176a5",
+        },
+        body: JSON.stringify({
+          sessionId: "9176a5",
+          runId: "home-pre-fix",
+          hypothesisId: "A",
+          location: "keyValueStorage.ts:get:non2xx",
+          message: "GET non-2xx — soft-fail null (Hostinger /api 404)",
+          data: { url, key, status: xhr.status, contentType },
+          timestamp: Date.now(),
+        }),
+      }).catch(() => {});
+      // #endregion
+      console.error(
+        `[ApiStorage] GET ${url} failed with status ${xhr.status} — retornando null (API indisponível).`,
+      );
+      return null;
     }
     try {
       const body = parseApiJson<{ value?: T | null }>(
