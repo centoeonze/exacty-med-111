@@ -27,11 +27,6 @@ import {
   savePublished,
   type CmsDraft,
 } from "./storage";
-import { cmsTrace, cmsTraceBegin } from "./cmsSaveTrace";
-import {
-  getStorageRepository,
-  resolveCmsStorageProvider,
-} from "./repositories";
 type StatusTone = "idle" | "ok" | "err";
 
 type GrapesEditorProps = {
@@ -40,14 +35,10 @@ type GrapesEditorProps = {
 
 /**
  * Compiled site CSS for Publish — inlined at build time so static hosts
- * never depend on a runtime fetch of /assets/*.css (which 404/HTML-fallback
- * used to abort Publish with "Falha ao publicar").
+ * never depend on a runtime fetch of /assets/*.css.
  */
-const loadSiteCssText = async (): Promise<string> => {
-  const css = typeof siteCssInline === "string" ? siteCssInline : "";
-  cmsTrace(6, "loadSiteCssText (?inline)", true, { cssLen: css.length });
-  return css;
-};
+const loadSiteCssText = async (): Promise<string> =>
+  typeof siteCssInline === "string" ? siteCssInline : "";
 
 const GrapesEditor = ({ onLogout }: GrapesEditorProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -184,101 +175,27 @@ const GrapesEditor = ({ onLogout }: GrapesEditorProps) => {
   };
 
   const handleSave = () => {
-    cmsTraceBegin("save");
-    cmsTrace(1, "Clique recebido (Salvar)");
     try {
-      cmsTrace(2, "Evento do botão / handleSave disparado");
-      cmsTrace(3, "Método save() chamado", true, {
-        hasEditor: Boolean(editorRef.current),
-      });
-      const repo = getStorageRepository();
-      const provider = resolveCmsStorageProvider();
-      cmsTrace(4, "StorageRepository selecionado", true, {
-        repoName: repo.constructor.name,
-      });
-      cmsTrace(5, "Provider ativo", true, {
-        provider,
-        windowFlag: (window as unknown as { __CMS_STORAGE_PROVIDER__?: string })
-          .__CMS_STORAGE_PROVIDER__,
-        mode: import.meta.env.MODE,
-        prod: import.meta.env.PROD,
-        dev: import.meta.env.DEV,
-      });
-      const project = getProject();
-      cmsTrace(6, "Dados sendo serializados", true, {
-        projectKeys: Object.keys(project || {}).slice(0, 12),
-        approxJsonLen: (() => {
-          try {
-            return JSON.stringify(project).length;
-          } catch {
-            return -1;
-          }
-        })(),
-      });
-      cmsTrace(7, "Escrita iniciada (saveDraft)");
-      saveDraft(project);
-      const stored = localStorage.getItem("exacty-cms-draft");
-      cmsTrace(8, "Escrita concluída", Boolean(stored), {
-        localStorageBytes: stored?.length ?? 0,
-      });
+      saveDraft(getProject());
       flash("ok", "Rascunho salvo no navegador");
-      cmsTrace(9, "Estado atualizado (flash ok)");
-      cmsTrace(10, "Mensagem de sucesso");
     } catch (error) {
-      cmsTrace(8, "ERRO — execução interrompida", false, {
-        errorMessage: error instanceof Error ? error.message : String(error),
-      });
       console.error("[Exacty CMS] Falha ao salvar rascunho", error);
       flash("err", "Falha ao salvar rascunho");
     }
   };
 
   const handlePublish = async () => {
-    cmsTraceBegin("publish");
-    cmsTrace(1, "Clique recebido (Publicar)");
     const editor = editorRef.current;
-    if (!editor) {
-      cmsTrace(2, "ERRO — editorRef null; Publish abortado", false);
-      return;
-    }
+    if (!editor) return;
     try {
-      cmsTrace(2, "Evento do botão / handlePublish disparado");
-      cmsTrace(3, "Método publish() chamado");
-      const repo = getStorageRepository();
-      const provider = resolveCmsStorageProvider();
-      cmsTrace(4, "StorageRepository selecionado", true, {
-        repoName: repo.constructor.name,
-      });
-      cmsTrace(5, "Provider ativo", true, {
-        provider,
-        windowFlag: (window as unknown as { __CMS_STORAGE_PROVIDER__?: string })
-          .__CMS_STORAGE_PROVIDER__,
-        mode: import.meta.env.MODE,
-        prod: import.meta.env.PROD,
-      });
       const project = getProject();
-      cmsTrace(6, "Dados sendo serializados (draft+html+css)", true, {
-        projectKeys: Object.keys(project || {}).slice(0, 12),
-      });
-      cmsTrace(7, "Escrita iniciada (saveDraft + savePublished)");
       saveDraft(project);
       const html = editor.getHtml();
       const siteCss = await loadSiteCssText();
       const css = `${siteCss}\n${editor.getCss() ?? ""}`;
       savePublished({ html, css });
-      const stored = localStorage.getItem("exacty-cms-published");
-      cmsTrace(8, "Escrita concluída", Boolean(stored), {
-        localStorageBytes: stored?.length ?? 0,
-        htmlLen: html.length,
-        cssLen: css.length,
-      });
       flash("ok", "Página publicada — abra / para ver");
-      cmsTrace(9, "Estado atualizado (flash ok)");
-      cmsTrace(10, "Mensagem de sucesso");
     } catch (error) {
-      cmsTrace(8, "ERRO — execução interrompida", false, {
-        errorMessage: error instanceof Error ? error.message : String(error),
-      });
       console.error("[Exacty CMS] Falha ao publicar", error);
       flash("err", "Falha ao publicar");
     }
