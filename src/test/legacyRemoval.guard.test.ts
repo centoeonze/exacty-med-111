@@ -81,12 +81,12 @@ describe("legacyRemoval.guard (Stage 10A)", () => {
     expect(hits).toEqual([]);
   });
 
-  it("resolve helpers are API-only", async () => {
+  it("resolve helpers keep storage/upload on API; auth supports local|api", async () => {
     const { resolveCmsStorageProvider } = await import("@/cms/repositories");
     const { resolveCmsAuthProvider } = await import("@/cms/auth/cmsAuthApi");
     const { resolveCmsAssetUploadMode } = await import("@/cms/mediaManager");
     expect(resolveCmsStorageProvider()).toBe("api");
-    expect(resolveCmsAuthProvider()).toBe("api");
+    expect(["local", "api"]).toContain(resolveCmsAuthProvider());
     expect(resolveCmsAssetUploadMode()).toBe("api");
   });
 });

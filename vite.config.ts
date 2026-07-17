@@ -1,33 +1,53 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
-  server: {
-    host: "::",
-    port: 8080,
-    hmr: {
-      overlay: false,
-    },
-    proxy: {
-      // Stage 10A — all /api/* (storage, auth, assets) → Express
-      "/api": {
-        target: "http://localhost:3001",
-        changeOrigin: true,
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "");
+  const authProvider = String(
+    env.VITE_CMS_AUTH_PROVIDER || env.CMS_AUTH_PROVIDER || "local",
+  )
+    .trim()
+    .toLowerCase();
+  const useLocalAuth = authProvider !== "api";
+
+  return {
+    server: {
+      host: "::",
+      port: 8080,
+      hmr: {
+        overlay: false,
       },
-      // Stage 8 — uploaded assets served by Express
-      "/uploads": {
-        target: "http://localhost:3001",
-        changeOrigin: true,
+      proxy: {
+        // Stage 10A — all /api/* (storage, auth, assets) → Express
+        "/api": {
+          target: "http://localhost:3001",
+          changeOrigin: true,
+        },
+        // Stage 8 — uploaded assets served by Express
+        "/uploads": {
+          target: "http://localhost:3001",
+          changeOrigin: true,
+        },
       },
     },
-  },
-  plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
+    define: {
+      // Local auth only: embed CMS_USERNAME/PASSWORD for static hosting (Hostinger).
+      // API mode keeps null so credentials are not bundled.
+      __EXACTY_CMS_LOCAL_CREDS__: useLocalAuth
+        ? JSON.stringify({
+            username: String(env.CMS_USERNAME || env.VITE_CMS_USERNAME || "").trim(),
+            password: String(env.CMS_PASSWORD || env.VITE_CMS_PASSWORD || ""),
+          })
+        : "null",
     },
-  },
-}));
+    plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
+      },
+    },
+  };
+});

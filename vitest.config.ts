@@ -4,6 +4,10 @@ import path from "path";
 
 export default defineConfig({
   plugins: [react()],
+  define: {
+    // Unit tests default to no injected local creds (use VITE_CMS_* stubs instead).
+    __EXACTY_CMS_LOCAL_CREDS__: "null",
+  },
   test: {
     environment: "jsdom",
     globals: true,
