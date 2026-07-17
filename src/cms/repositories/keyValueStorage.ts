@@ -30,7 +30,6 @@ const isHtmlOrNonJsonBody = (text: string, contentType: string | null): boolean 
   const type = (contentType || "").toLowerCase();
   if (type.includes("text/html")) return true;
   if (type && !type.includes("application/json") && !type.includes("text/plain") && !type.includes("+json")) {
-    // Unknown non-JSON content type with HTML-looking body
     if (/^\s*</.test(text)) return true;
   }
   return /^\s*</.test(text);
@@ -84,57 +83,7 @@ export class HttpKeyValueStorage implements IKeyValueStorage {
     xhr.send(null);
     const text = xhr.responseText || "";
     const contentType = xhr.getResponseHeader("Content-Type");
-    // #region agent log
-    {
-      const looksHtml = /^\s*</.test(text);
-      fetch("http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Debug-Session-Id": "9176a5",
-        },
-        body: JSON.stringify({
-          sessionId: "9176a5",
-          runId: "post-fix",
-          hypothesisId: "A",
-          location: "keyValueStorage.ts:get",
-          message: "HttpKeyValueStorage GET response",
-          data: {
-            url,
-            key,
-            status: xhr.status,
-            contentType,
-            looksHtml,
-            bodyPrefix: text.slice(0, 80),
-            willSoftFail:
-              xhr.status >= 200 &&
-              xhr.status < 300 &&
-              isHtmlOrNonJsonBody(text, contentType),
-          },
-          timestamp: Date.now(),
-        }),
-      }).catch(() => {});
-    }
-    // #endregion
     if (xhr.status < 200 || xhr.status >= 300) {
-      // #region agent log
-      fetch("http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Debug-Session-Id": "9176a5",
-        },
-        body: JSON.stringify({
-          sessionId: "9176a5",
-          runId: "home-pre-fix",
-          hypothesisId: "A",
-          location: "keyValueStorage.ts:get:non2xx",
-          message: "GET non-2xx — soft-fail null (Hostinger /api 404)",
-          data: { url, key, status: xhr.status, contentType },
-          timestamp: Date.now(),
-        }),
-      }).catch(() => {});
-      // #endregion
       console.error(
         `[ApiStorage] GET ${url} failed with status ${xhr.status} — retornando null (API indisponível).`,
       );
@@ -150,7 +99,6 @@ export class HttpKeyValueStorage implements IKeyValueStorage {
       );
       return (body.value ?? null) as T | null;
     } catch (error) {
-      // Soft-fail reads so the admin shell still mounts when API is absent (static host).
       console.error("[ApiStorage] GET soft-fail — retornando null", error);
       return null;
     }
@@ -164,37 +112,9 @@ export class HttpKeyValueStorage implements IKeyValueStorage {
     xhr.send(JSON.stringify({ value }));
     const text = xhr.responseText || "";
     const contentType = xhr.getResponseHeader("Content-Type");
-    // #region agent log
-    {
-      fetch("http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Debug-Session-Id": "9176a5",
-        },
-        body: JSON.stringify({
-          sessionId: "9176a5",
-          runId: "save-post-fix",
-          hypothesisId: "A",
-          location: "keyValueStorage.ts:set",
-          message: "HttpKeyValueStorage POST (should NOT run in local storage mode)",
-          data: {
-            url,
-            key,
-            status: xhr.status,
-            contentType,
-            looksHtml: /^\s*</.test(text),
-            bodyPrefix: text.slice(0, 80),
-          },
-          timestamp: Date.now(),
-        }),
-      }).catch(() => {});
-    }
-    // #endregion
     if (xhr.status < 200 || xhr.status >= 300) {
       throw new Error(`[ApiStorage] POST ${key} failed with status ${xhr.status}`);
     }
-    // SPA hosts may return 200 + index.html for missing /api routes.
     if (isHtmlOrNonJsonBody(text, contentType)) {
       parseApiJson(url, "POST", xhr.status, contentType, text || "<!DOCTYPE html>");
     }
@@ -207,33 +127,6 @@ export class HttpKeyValueStorage implements IKeyValueStorage {
     xhr.send(null);
     const text = xhr.responseText || "";
     const contentType = xhr.getResponseHeader("Content-Type");
-    // #region agent log
-    {
-      fetch("http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Debug-Session-Id": "9176a5",
-        },
-        body: JSON.stringify({
-          sessionId: "9176a5",
-          runId: "post-fix",
-          hypothesisId: "A",
-          location: "keyValueStorage.ts:remove",
-          message: "HttpKeyValueStorage DELETE response",
-          data: {
-            url,
-            key,
-            status: xhr.status,
-            contentType,
-            looksHtml: /^\s*</.test(text),
-            bodyPrefix: text.slice(0, 80),
-          },
-          timestamp: Date.now(),
-        }),
-      }).catch(() => {});
-    }
-    // #endregion
     if (xhr.status < 200 || xhr.status >= 300) {
       throw new Error(`[ApiStorage] DELETE ${key} failed with status ${xhr.status}`);
     }

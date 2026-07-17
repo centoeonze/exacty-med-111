@@ -37,30 +37,6 @@ const uploadFileViaApi = async (file: File, type: string): Promise<UploadedAsset
     body,
   });
   const rawText = await res.text();
-  // #region agent log
-  fetch("http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Debug-Session-Id": "9176a5",
-    },
-    body: JSON.stringify({
-      sessionId: "9176a5",
-      runId: "pre-fix",
-      hypothesisId: "C",
-      location: "mediaManager.ts:uploadFileViaApi",
-      message: "Asset upload response before JSON parse",
-      data: {
-        url: "/api/assets/upload",
-        status: res.status,
-        contentType: res.headers.get("Content-Type"),
-        looksHtml: /^\s*</.test(rawText),
-        bodyPrefix: rawText.slice(0, 80),
-      },
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-  // #endregion
   let data = {} as {
     ok?: boolean;
     asset?: { id: string; url: string; name?: string | null };
@@ -108,24 +84,6 @@ export const fileNameFromSrc = (src: string, fallback = "documento.pdf") => {
 };
 
 export const loadPersistedMediaAssets = (): Array<Record<string, unknown>> => {
-  // #region agent log
-  fetch("http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Debug-Session-Id": "9176a5",
-    },
-    body: JSON.stringify({
-      sessionId: "9176a5",
-      runId: "post-fix",
-      hypothesisId: "A",
-      location: "mediaManager.ts:loadPersistedMediaAssets",
-      message: "Loading media assets from storage (runs during grapesjs.init)",
-      data: { path: typeof window !== "undefined" ? window.location.pathname : null },
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-  // #endregion
   try {
     return getStorageRepository().loadMediaAssets();
   } catch (error) {
