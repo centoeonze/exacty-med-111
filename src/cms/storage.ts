@@ -1,15 +1,28 @@
 /**
  * Public CMS persistence façade.
- * Delegates to IStorageRepository — callers keep the same sync API.
+ * Delegates to IStorageRepository. Versioned Save/Publish live in draftPublish.ts.
  */
 import {
   getStorageRepository,
   type CmsDraft,
+  type CmsDraftSnapshot,
   type CmsPublishedPage,
 } from "./repositories";
+import {
+  extractProjectFromStoredDraft,
+  normalizePublishedPage,
+} from "./draftPublish";
 
 export { DRAFT_KEY, PUBLISHED_KEY } from "./repositories";
-export type { CmsDraft, CmsPublishedPage };
+export type { CmsDraft, CmsDraftSnapshot, CmsPublishedPage };
+export {
+  loadDraftSnapshot,
+  publishLatestDraft,
+  saveDraftFromEditor,
+  validateDraftSnapshot,
+  extractProjectFromStoredDraft,
+  normalizePublishedPage,
+} from "./draftPublish";
 
 export type CmsExportPayload = {
   version: 1;
@@ -18,9 +31,12 @@ export type CmsExportPayload = {
   exportedAt: string;
 };
 
-export const loadDraft = (): CmsDraft | null => getStorageRepository().loadDraft();
+/** GrapesJS project for the editor (unwraps draft-v2 snapshots). */
+export const loadDraft = (): CmsDraft | null =>
+  extractProjectFromStoredDraft(getStorageRepository().loadDraft());
 
-export const saveDraft = (draft: CmsDraft): void => {
+/** Low-level draft write — prefer saveDraftFromEditor for CMS Salvar. */
+export const saveDraft = (draft: CmsDraft | CmsDraftSnapshot): void => {
   getStorageRepository().saveDraft(draft);
 };
 
@@ -28,10 +44,20 @@ export const clearDraft = (): void => {
   getStorageRepository().clearDraft();
 };
 
-export const loadPublished = (): CmsPublishedPage | null => getStorageRepository().loadPublished();
+/** Public site source of truth (Published only). */
+export const loadPublished = (): CmsPublishedPage | null =>
+  normalizePublishedPage(getStorageRepository().loadPublished());
 
-export const savePublished = (page: Omit<CmsPublishedPage, "updatedAt">): CmsPublishedPage =>
-  getStorageRepository().savePublished(page);
+/** Low-level published write — prefer publishLatestDraft() for CMS Publicar. */
+export const savePublished = (page: {
+  html: string;
+  css: string;
+  versionId?: string;
+  publishedAt?: string;
+  checksum?: string;
+  updatedAt?: string;
+  kind?: CmsPublishedPage["kind"];
+}): CmsPublishedPage => getStorageRepository().savePublished(page);
 
 export const clearPublished = (): void => {
   getStorageRepository().clearPublished();
@@ -60,10 +86,17 @@ export const parseImportFile = async (file: File): Promise<CmsDraft> => {
   if (data && typeof data === "object" && "draft" in data && data.draft) {
     const payload = data as CmsExportPayload;
     if (payload.published?.html) {
-      savePublished({ html: payload.published.html, css: payload.published.css ?? "" });
+      const publishedAt = new Date().toISOString();
+      savePublished({
+        versionId: payload.published.versionId || `import-${publishedAt}`,
+        publishedAt: payload.published.publishedAt || publishedAt,
+        checksum: payload.published.checksum || "import",
+        html: payload.published.html,
+        css: payload.published.css ?? "",
+      });
     }
-    return payload.draft;
+    return extractProjectFromStoredDraft(payload.draft) ?? (payload.draft as CmsDraft);
   }
 
-  return data as CmsDraft;
+  return extractProjectFromStoredDraft(data as CmsDraft) ?? (data as CmsDraft);
 };

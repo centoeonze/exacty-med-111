@@ -8,6 +8,7 @@ import {
   MEDIA_ASSETS_KEY,
   PUBLISHED_KEY,
   type CmsDraft,
+  type CmsDraftSnapshot,
   type CmsMediaAssetRow,
   type CmsPublishedPage,
 } from "./types";
@@ -37,11 +38,11 @@ const writeJson = (key: string, value: unknown): void => {
 };
 
 export class LocalStorageRepository implements IStorageRepository {
-  loadDraft(): CmsDraft | null {
-    return readJson<CmsDraft>(DRAFT_KEY);
+  loadDraft(): CmsDraft | CmsDraftSnapshot | null {
+    return readJson<CmsDraft | CmsDraftSnapshot>(DRAFT_KEY);
   }
 
-  saveDraft(draft: CmsDraft): void {
+  saveDraft(draft: CmsDraft | CmsDraftSnapshot): void {
     writeJson(DRAFT_KEY, draft);
   }
 
@@ -55,10 +56,22 @@ export class LocalStorageRepository implements IStorageRepository {
     return data;
   }
 
-  savePublished(page: Omit<CmsPublishedPage, "updatedAt">): CmsPublishedPage {
+  savePublished(page: {
+    html: string;
+    css: string;
+    versionId?: string;
+    publishedAt?: string;
+    checksum?: string;
+    updatedAt?: string;
+    kind?: CmsPublishedPage["kind"];
+  }): CmsPublishedPage {
+    const publishedAt = page.publishedAt || new Date().toISOString();
     const payload: CmsPublishedPage = {
       ...page,
-      updatedAt: new Date().toISOString(),
+      publishedAt,
+      updatedAt: page.updatedAt || publishedAt,
+      versionId: page.versionId || `v-${publishedAt}`,
+      checksum: page.checksum || "",
     };
     writeJson(PUBLISHED_KEY, payload);
     return payload;

@@ -8,25 +8,23 @@ import {
   MEDIA_ASSETS_KEY,
   PUBLISHED_KEY,
   type CmsDraft,
+  type CmsDraftSnapshot,
   type CmsMediaAssetRow,
   type CmsPublishedPage,
 } from "./types";
 
 /**
  * Domain storage adapter over the Express key-value API.
- * KV backend is HTTP (`/api/storage/:key`).
- * Contract tests inject MemoryKeyValueStorage (no network).
- *
  * Selected when VITE_CMS_STORAGE_PROVIDER=api.
  */
 export class ApiStorageRepository implements IStorageRepository {
   constructor(private readonly kv: IKeyValueStorage = new HttpKeyValueStorage()) {}
 
-  loadDraft(): CmsDraft | null {
-    return this.kv.get<CmsDraft>(DRAFT_KEY);
+  loadDraft(): CmsDraft | CmsDraftSnapshot | null {
+    return this.kv.get<CmsDraft | CmsDraftSnapshot>(DRAFT_KEY);
   }
 
-  saveDraft(draft: CmsDraft): void {
+  saveDraft(draft: CmsDraft | CmsDraftSnapshot): void {
     this.kv.set(DRAFT_KEY, draft);
   }
 
@@ -40,10 +38,22 @@ export class ApiStorageRepository implements IStorageRepository {
     return data;
   }
 
-  savePublished(page: Omit<CmsPublishedPage, "updatedAt">): CmsPublishedPage {
+  savePublished(page: {
+    html: string;
+    css: string;
+    versionId?: string;
+    publishedAt?: string;
+    checksum?: string;
+    updatedAt?: string;
+    kind?: CmsPublishedPage["kind"];
+  }): CmsPublishedPage {
+    const publishedAt = page.publishedAt || new Date().toISOString();
     const payload: CmsPublishedPage = {
       ...page,
-      updatedAt: new Date().toISOString(),
+      publishedAt,
+      updatedAt: page.updatedAt || publishedAt,
+      versionId: page.versionId || `v-${publishedAt}`,
+      checksum: page.checksum || "",
     };
     this.kv.set(PUBLISHED_KEY, payload);
     return payload;

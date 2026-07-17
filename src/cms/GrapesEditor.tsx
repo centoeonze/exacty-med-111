@@ -23,8 +23,8 @@ import {
   exportCmsJson,
   loadDraft,
   parseImportFile,
-  saveDraft,
-  savePublished,
+  publishLatestDraft,
+  saveDraftFromEditor,
   type CmsDraft,
 } from "./storage";
 type StatusTone = "idle" | "ok" | "err";
@@ -33,11 +33,8 @@ type GrapesEditorProps = {
   onLogout?: () => void | Promise<void>;
 };
 
-/**
- * Compiled site CSS for Publish — inlined at build time so static hosts
- * never depend on a runtime fetch of /assets/*.css.
- */
-const loadSiteCssText = async (): Promise<string> =>
+/** Site CSS baked at build time — used when serializing Draft (Save), not on Publish. */
+const getSiteCssText = (): string =>
   typeof siteCssInline === "string" ? siteCssInline : "";
 
 const GrapesEditor = ({ onLogout }: GrapesEditorProps) => {
@@ -174,30 +171,42 @@ const GrapesEditor = ({ onLogout }: GrapesEditorProps) => {
     return editor.getProjectData() as CmsDraft;
   };
 
+  /** Serialize current editor → versioned Draft. Never touches Published. */
+  const persistDraftFromEditor = () => {
+    const editor = editorRef.current;
+    if (!editor) {
+      throw new Error("Editor não está pronto.");
+    }
+    const project = editor.getProjectData() as CmsDraft;
+    const html = editor.getHtml() ?? "";
+    const css = `${getSiteCssText()}\n${editor.getCss() ?? ""}`;
+    return saveDraftFromEditor({ project, html, css });
+  };
+
   const handleSave = () => {
     try {
-      saveDraft(getProject());
+      persistDraftFromEditor();
       flash("ok", "Rascunho salvo no navegador");
     } catch (error) {
       console.error("[Exacty CMS] Falha ao salvar rascunho", error);
-      flash("err", "Falha ao salvar rascunho");
+      flash(
+        "err",
+        error instanceof Error ? error.message : "Falha ao salvar rascunho",
+      );
     }
   };
 
-  const handlePublish = async () => {
-    const editor = editorRef.current;
-    if (!editor) return;
+  /** Promote last saved Draft → Published. Does not re-read the editor. */
+  const handlePublish = () => {
     try {
-      const project = getProject();
-      saveDraft(project);
-      const html = editor.getHtml();
-      const siteCss = await loadSiteCssText();
-      const css = `${siteCss}\n${editor.getCss() ?? ""}`;
-      savePublished({ html, css });
+      publishLatestDraft();
       flash("ok", "Página publicada — abra / para ver");
     } catch (error) {
       console.error("[Exacty CMS] Falha ao publicar", error);
-      flash("err", "Falha ao publicar");
+      flash(
+        "err",
+        error instanceof Error ? error.message : "Falha ao publicar",
+      );
     }
   };
 
@@ -221,7 +230,7 @@ const GrapesEditor = ({ onLogout }: GrapesEditorProps) => {
     try {
       const draft = await parseImportFile(file);
       editorRef.current.loadProjectData(draft);
-      saveDraft(draft);
+      persistDraftFromEditor();
       requestAnimationFrame(() => {
         if (!editorRef.current) return;
         ensureFloatingWhatsAppInEditor(editorRef.current);
@@ -246,7 +255,16 @@ const GrapesEditor = ({ onLogout }: GrapesEditorProps) => {
     if (!ok) return;
     editorRef.current.setComponents(getDefaultPageHtml());
     editorRef.current.setStyle("");
-    saveDraft(getProject());
+    try {
+      persistDraftFromEditor();
+    } catch (error) {
+      console.error("[Exacty CMS] Falha ao salvar rascunho após reset", error);
+      flash(
+        "err",
+        error instanceof Error ? error.message : "Falha ao salvar após reset",
+      );
+      return;
+    }
     requestAnimationFrame(() => {
       if (!editorRef.current) return;
       ensureFloatingWhatsAppInEditor(editorRef.current);

@@ -68,10 +68,15 @@ export const runIStorageRepositoryContract = (
       const published = repository.savePublished({
         html: "<main id='hero'>Home</main>",
         css: "main{display:block}",
+        versionId: "v-test-1",
+        publishedAt: "2026-01-01T00:00:00.000Z",
+        checksum: "cabc",
       });
 
       expect(published.html).toBe("<main id='hero'>Home</main>");
       expect(published.css).toBe("main{display:block}");
+      expect(published.versionId).toBe("v-test-1");
+      expect(published.checksum).toBe("cabc");
       expect(published.updatedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
       expect(repository.loadPublished()).toEqual(published);
     });

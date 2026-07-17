@@ -1,17 +1,34 @@
-import type { CmsDraft, CmsMediaAssetRow, CmsPublishedPage } from "./types";
+import type {
+  CmsDraft,
+  CmsDraftSnapshot,
+  CmsMediaAssetRow,
+  CmsPublishedPage,
+} from "./types";
 
 /**
  * Domain storage contract for the CMS.
- * Callers (Editor, media manager, Home) depend only on this interface —
- * never on localStorage or HTTP directly.
+ * Callers depend only on this interface — never on localStorage or HTTP directly.
+ *
+ * Draft values may be a versioned CmsDraftSnapshot or a legacy raw GrapesJS project.
  */
 export interface IStorageRepository {
-  loadDraft(): CmsDraft | null;
-  saveDraft(draft: CmsDraft): void;
+  loadDraft(): CmsDraft | CmsDraftSnapshot | null;
+  saveDraft(draft: CmsDraft | CmsDraftSnapshot): void;
   clearDraft(): void;
 
   loadPublished(): CmsPublishedPage | null;
-  savePublished(page: Omit<CmsPublishedPage, "updatedAt">): CmsPublishedPage;
+  /** Accepts full published snapshots or legacy { html, css } rows. */
+  savePublished(
+    page: {
+      html: string;
+      css: string;
+      versionId?: string;
+      publishedAt?: string;
+      checksum?: string;
+      updatedAt?: string;
+      kind?: CmsPublishedPage["kind"];
+    },
+  ): CmsPublishedPage;
   clearPublished(): void;
 
   loadMediaAssets(): CmsMediaAssetRow[];

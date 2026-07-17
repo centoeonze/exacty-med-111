@@ -39,8 +39,16 @@ describe("LocalStorageRepository save/publish", () => {
   it("savePublished persists html/css without fetch", () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch");
     const repo = new LocalStorageRepository();
-    const page = repo.savePublished({ html: "<h1>Hi</h1>", css: "h1{}" });
+    const page = repo.savePublished({
+      html: "<h1>Hi</h1>",
+      css: "h1{}",
+      versionId: "v1",
+      publishedAt: "2026-01-01T00:00:00.000Z",
+      checksum: "c1",
+    });
     expect(page.html).toBe("<h1>Hi</h1>");
+    expect(page.versionId).toBe("v1");
+    expect(page.checksum).toBe("c1");
     expect(page.updatedAt).toBeTruthy();
     expect(JSON.parse(memory.get(PUBLISHED_KEY)!).html).toBe("<h1>Hi</h1>");
     expect(repo.loadPublished()?.html).toBe("<h1>Hi</h1>");

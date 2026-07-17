@@ -61,7 +61,11 @@ export {
   DRAFT_KEY,
   PUBLISHED_KEY,
   MEDIA_ASSETS_KEY,
+  DRAFT_SNAPSHOT_KIND,
+  PUBLISHED_SNAPSHOT_KIND,
   type CmsDraft,
+  type CmsDraftSnapshot,
+  type CmsProjectData,
   type CmsPublishedPage,
   type CmsMediaAssetRow,
 } from "./types";
