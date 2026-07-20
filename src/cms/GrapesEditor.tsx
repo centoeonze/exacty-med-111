@@ -185,56 +185,10 @@ const GrapesEditor = ({ onLogout }: GrapesEditorProps) => {
 
   const handleSave = () => {
     try {
-      // #region agent log
-      fetch("http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Debug-Session-Id": "9176a5",
-        },
-        body: JSON.stringify({
-          sessionId: "9176a5",
-          runId: "post-fix",
-          hypothesisId: "D",
-          location: "GrapesEditor.tsx:handleSave",
-          message: "save clicked",
-          data: {
-            windowProvider:
-              (window as unknown as { __CMS_STORAGE_PROVIDER__?: string })
-                .__CMS_STORAGE_PROVIDER__ ?? null,
-            href: window.location.href,
-          },
-          timestamp: Date.now(),
-        }),
-      }).catch(() => {});
-      // #endregion
       persistDraftFromEditor();
       flash("ok", "Rascunho salvo no navegador");
     } catch (error) {
       console.error("[Exacty CMS] Falha ao salvar rascunho", error);
-      // #region agent log
-      fetch("http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Debug-Session-Id": "9176a5",
-        },
-        body: JSON.stringify({
-          sessionId: "9176a5",
-          runId: "post-fix",
-          hypothesisId: "E",
-          location: "GrapesEditor.tsx:handleSave:catch",
-          message: "save failed",
-          data: {
-            error: error instanceof Error ? error.message : String(error),
-            windowProvider:
-              (window as unknown as { __CMS_STORAGE_PROVIDER__?: string })
-                .__CMS_STORAGE_PROVIDER__ ?? null,
-          },
-          timestamp: Date.now(),
-        }),
-      }).catch(() => {});
-      // #endregion
       flash(
         "err",
         error instanceof Error ? error.message : "Falha ao salvar rascunho",

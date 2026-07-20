@@ -1,3 +1,11 @@
+# Hostinger / Apache / LiteSpeed — raise body limit for CMS PDF uploads (60 MB).
+# Without this, the reverse proxy returns HTML 413 before Express/Multer.
+LimitRequestBody 62914560
+
+<IfModule LiteSpeed>
+  MaxReqBodySize 62914560
+</IfModule>
+
 # Hostinger / Apache: SPA fallback must NOT rewrite /api/* or /uploads/* to index.html.
 <IfModule mod_rewrite.c>
   RewriteEngine On
