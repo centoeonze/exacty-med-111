@@ -2,17 +2,25 @@
 # Without this, the reverse proxy returns HTML 413 before Express/Multer.
 LimitRequestBody 62914560
 
+# Some Hostinger stacks enforce body size via ModSecurity (ignore if module absent).
+<IfModule mod_security.c>
+  SecRequestBodyLimit 62914560
+  SecRequestBodyNoFilesLimit 62914560
+</IfModule>
+
 <IfModule LiteSpeed>
   MaxReqBodySize 62914560
 </IfModule>
 
-# Hostinger / Apache: SPA fallback must NOT rewrite /api/* or /uploads/* to index.html.
+# SPA fallback must NOT rewrite /api/* or /uploads/* to index.html.
+# Do NOT force R=404 on /api — that blocks Express uploads (HTML 404 instead of JSON).
+# Pass those paths through so Node / reverse-proxy can handle them.
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
 
-  RewriteRule ^api/ - [R=404,L]
-  RewriteRule ^uploads/ - [L]
+  RewriteRule ^api(?:/|$) - [L]
+  RewriteRule ^uploads(?:/|$) - [L]
 
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
