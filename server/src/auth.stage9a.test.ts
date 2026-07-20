@@ -4,7 +4,7 @@ import { createApp } from "./app.js";
 import { AuthService } from "./services/AuthService.js";
 import { getPrismaClient } from "./repositories/SqliteStorageRepository.js";
 import { PrismaUserRepository } from "./repositories/prismaCmsRepositories.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 describe("Auth API (Stage 9A)", () => {
   const prisma = getPrismaClient();

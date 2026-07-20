@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -11,7 +12,7 @@ const repoRoot = path.resolve(serverRoot, "..");
 dotenv.config({ path: path.join(repoRoot, ".env") });
 dotenv.config({ path: path.join(serverRoot, ".env") });
 
-// Hostinger / missing .env: keep SQLite under server/prisma (stable cwd-independent path).
+// Stable SQLite path (Docker volumes / EasyPanel cwd-independent).
 if (!process.env.DATABASE_URL || process.env.DATABASE_URL.startsWith("file:./")) {
   process.env.DATABASE_URL = `file:${path
     .join(serverRoot, "prisma", "cms.db")
@@ -32,11 +33,31 @@ const resolveSpaDir = (): string | undefined => {
   return undefined;
 };
 
+const runMigrations = () => {
+  try {
+    execFileSync("npx", ["prisma", "migrate", "deploy"], {
+      cwd: serverRoot,
+      env: process.env,
+      stdio: "inherit",
+      shell: true,
+    });
+  } catch (error) {
+    console.error("[exacty-cms-api] prisma migrate deploy failed:", error);
+    throw error;
+  }
+};
+
 const serveSpaDir = resolveSpaDir();
 const uploadsDir = path.join(serverRoot, "uploads");
-const app = createApp({ serveSpaDir, uploadsDir });
+fs.mkdirSync(uploadsDir, { recursive: true });
+fs.mkdirSync(path.join(serverRoot, "prisma"), { recursive: true });
 
 const bootstrap = async () => {
+  // Volumes on EasyPanel often mount an empty prisma dir — migrate on every boot.
+  runMigrations();
+
+  const app = createApp({ serveSpaDir, uploadsDir });
+
   try {
     const auth = new AuthService(getPrismaClient());
     const result = await auth.ensureBootstrapUserFromEnv();
@@ -46,7 +67,7 @@ const bootstrap = async () => {
       console.log(`[exacty-cms-api] bootstrap user ready: ${result.email}`);
     }
   } catch (error) {
-    console.warn("[exacty-cms-api] bootstrap user skipped:", error);
+    console.warn("[exacty-cms-api] bootstrap user failed:", error);
   }
 
   // 0.0.0.0 — required for EasyPanel / Docker / reverse-proxy.
@@ -55,6 +76,9 @@ const bootstrap = async () => {
       `[exacty-cms-api] listening on http://0.0.0.0:${serverConfig.port}`,
     );
     console.log(`[exacty-cms-api] NODE_ENV=${process.env.NODE_ENV || "undefined"}`);
+    console.log(
+      `[exacty-cms-api] CMS_USERNAME set=${Boolean(String(process.env.CMS_USERNAME || "").trim())}`,
+    );
     console.log(`[exacty-cms-api] storage backend: sqlite (Prisma)`);
     console.log(`[exacty-cms-api] uploads dir: ${uploadsDir}`);
     console.log(

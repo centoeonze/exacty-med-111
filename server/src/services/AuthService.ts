@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import type { PrismaClient } from "@prisma/client";
 import { getPrismaClient } from "../repositories/SqliteStorageRepository.js";
@@ -119,13 +119,18 @@ export class AuthService {
   }
 
   /**
-   * Ensures at least one CMS user exists from CMS_USERNAME / CMS_PASSWORD (dev bootstrap).
-   * Never stores plain password — only bcrypt hash.
+   * Ensures CMS admin exists from CMS_USERNAME / CMS_PASSWORD.
+   * Syncs password hash on every boot so EasyPanel env credentials always work.
    */
   async ensureBootstrapUserFromEnv(): Promise<{ created: boolean; email: string } | null> {
     const username = String(process.env.CMS_USERNAME || "").trim();
     const password = String(process.env.CMS_PASSWORD || "");
-    if (!username || !password) return null;
+    if (!username || !password) {
+      console.warn(
+        "[exacty-cms-api] bootstrap skipped: set CMS_USERNAME and CMS_PASSWORD (runtime env, not only build-arg)",
+      );
+      return null;
+    }
 
     const email = username.includes("@")
       ? username
@@ -135,11 +140,16 @@ export class AuthService {
       (await this.users.findByEmail(email)) ||
       (await this.prisma.user.findFirst({ where: { username } }));
 
+    const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
+
     if (existing) {
+      await this.prisma.user.update({
+        where: { id: existing.id },
+        data: { passwordHash, username, email },
+      });
       return { created: false, email: existing.email };
     }
 
-    const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
     await this.users.create({
       email,
       username,

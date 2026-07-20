@@ -1,5 +1,5 @@
 # EasyPanel / production — Express API + Vite SPA (dist/).
-# Fix: copy server/prisma BEFORE npm ci (postinstall runs `prisma generate`).
+# Copy server/prisma BEFORE npm ci (postinstall = prisma generate).
 
 FROM node:22-alpine AS builder
 
@@ -7,10 +7,8 @@ WORKDIR /app
 
 RUN apk add --no-cache openssl libc6-compat python3 make g++
 
-# --- install deps (layer-cached) ---
 COPY package.json package-lock.json ./
 COPY server/package.json server/package-lock.json ./server/
-# Required before `npm ci --prefix server` because package.json postinstall = prisma generate
 COPY server/prisma ./server/prisma
 
 ENV DATABASE_URL="file:./prisma/cms.db"
@@ -18,7 +16,6 @@ ENV DATABASE_URL="file:./prisma/cms.db"
 RUN npm ci
 RUN npm ci --prefix server
 
-# --- app sources + frontend build ---
 COPY . .
 
 ENV NODE_ENV=production
@@ -38,6 +35,14 @@ RUN apk add --no-cache openssl libc6-compat
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV DATABASE_URL="file:./prisma/cms.db"
+
+# EasyPanel often passes secrets as build-args — promote to runtime ENV.
+ARG CMS_USERNAME
+ARG CMS_PASSWORD
+ARG CMS_SESSION_SECRET
+ENV CMS_USERNAME=$CMS_USERNAME
+ENV CMS_PASSWORD=$CMS_PASSWORD
+ENV CMS_SESSION_SECRET=$CMS_SESSION_SECRET
 
 COPY package.json ./
 COPY --from=builder /app/dist ./dist

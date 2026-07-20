@@ -1,12 +1,14 @@
 import type { Request, Response, NextFunction } from "express";
 import { AuthService } from "../services/AuthService.js";
 
-const cookieOptions = {
+const cookieOptions = () => ({
   httpOnly: true,
   sameSite: "lax" as const,
   path: "/",
+  // HTTPS behind EasyPanel / Hostinger reverse-proxy
+  secure: process.env.NODE_ENV === "production",
   maxAge: AuthService.sessionMaxAgeSec() * 1000,
-};
+});
 
 export class AuthController {
   constructor(private readonly auth: AuthService) {}
@@ -20,7 +22,7 @@ export class AuthController {
         res.status(result.status).json({ ok: false, error: result.error });
         return;
       }
-      res.cookie(AuthService.cookieName(), result.cookieValue, cookieOptions);
+      res.cookie(AuthService.cookieName(), result.cookieValue, cookieOptions());
       res.status(200).json({ ok: true, user: result.user });
     } catch (error) {
       next(error);
@@ -28,7 +30,10 @@ export class AuthController {
   };
 
   logout = async (_req: Request, res: Response) => {
-    res.clearCookie(AuthService.cookieName(), { path: "/" });
+    res.clearCookie(AuthService.cookieName(), {
+      path: "/",
+      secure: process.env.NODE_ENV === "production",
+    });
     res.status(200).json({ ok: true });
   };
 

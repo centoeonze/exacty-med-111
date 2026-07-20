@@ -28,6 +28,8 @@ export type CreateAppOptions = {
 
 export const createApp = (options: CreateAppOptions = {}) => {
   const app = express();
+  // EasyPanel / reverse-proxy terminates TLS in front of Node.
+  app.set("trust proxy", 1);
   const repository = options.repository ?? new SqliteStorageRepository();
   const storageBackend = options.storageBackend ?? "sqlite";
   const storageService = new StorageService(repository);
@@ -87,7 +89,21 @@ export const createApp = (options: CreateAppOptions = {}) => {
       res.status(400).json({ error: "File too large" });
       return;
     }
-    res.status(500).json({ error: "Internal server error" });
+    const code =
+      err && typeof err === "object" && "code" in err
+        ? String((err as { code?: string }).code || "")
+        : "";
+    if (code.startsWith("P")) {
+      res.status(500).json({
+        error: "Database error. Check DATABASE_URL and prisma migrations.",
+        code,
+      });
+      return;
+    }
+    res.status(500).json({
+      error: "Internal server error",
+      detail: err instanceof Error ? err.message : undefined,
+    });
   };
   app.use(errorHandler);
 
