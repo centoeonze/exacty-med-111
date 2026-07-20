@@ -45,7 +45,7 @@ export const createApp = (options: CreateAppOptions = {}) => {
     }),
   );
   app.use(cookieParser());
-  app.use(express.json({ limit: "50mb" }));
+  app.use(express.json({ limit: "60mb" }));
   app.use("/uploads", express.static(uploadsDir));
 
   app.use("/api", createHealthRouter(storageBackend));

@@ -1,6 +1,8 @@
 /**
- * Reusable PDF document trait for any link/component that needs a PDF attachment.
- * Uses the shared Asset Manager (images + PDFs) — no parallel upload flow.
+ * Reusable button/PDF traits for CTA links in the GrapesJS editor.
+ * On select, editable CTAs receive the same Settings package as the Botão block
+ * (text-content + href/target + pdf-file). PDF pick/upload uses the shared
+ * Asset Manager — no parallel upload or save/publish flow.
  */
 import type { Editor } from "grapesjs";
 import { fileNameFromSrc, openPdfAssetPicker, uploadCmsMediaFile } from "./mediaManager";
@@ -11,10 +13,14 @@ const isPdfHref = (href: string) =>
     /\.pdf($|\?|#)/i.test(href) ||
     href.includes("application/pdf"));
 
-const looksLikeDocumentLink = (component: {
+type TraitComponent = {
   get: (k: string) => unknown;
   getAttributes: () => Record<string, string>;
-}) => {
+  getTraits: () => Array<{ get: (k: string) => string }>;
+  addTrait: (trait: string | Record<string, unknown>, opts?: { at?: number }) => void;
+};
+
+const looksLikeDocumentLink = (component: TraitComponent) => {
   const tag = String(component.get("tagName") || "").toLowerCase();
   if (tag !== "a") return false;
   const attrs = component.getAttributes();
@@ -31,6 +37,74 @@ const looksLikeDocumentLink = (component: {
     text.includes("download") ||
     text.includes("documento")
   );
+};
+
+/** CTA / action anchors that should get the same Settings traits as the Botão block. */
+const looksLikeEditableButton = (component: TraitComponent) => {
+  const tag = String(component.get("tagName") || "").toLowerCase();
+  if (tag !== "a") return false;
+
+  const attrs = component.getAttributes();
+  const className = String(attrs.class || "");
+
+  if (
+    attrs["data-exacty-pdf"] === "1" ||
+    attrs["data-exacty-floating-whatsapp"] === "1" ||
+    attrs["data-exacty-editable-button"] === "1" ||
+    className.includes("hero-cta-primary") ||
+    className.includes("hero-cta-secondary")
+  ) {
+    return true;
+  }
+
+  // Styled CTA anchors (Final CTA, regulatory downloads, palette Botão)
+  if (
+    className.includes("rounded-full") &&
+    className.includes("inline-flex") &&
+    className.includes("font-semibold")
+  ) {
+    return true;
+  }
+
+  return looksLikeDocumentLink(component);
+};
+
+/** Same trait package as `exacty-button` in blocks.ts — no parallel editor system. */
+const ensureEditableButtonTraits = (component: TraitComponent) => {
+  const hasTrait = (predicate: (t: { get: (k: string) => string }) => boolean) =>
+    component.getTraits().some(predicate);
+
+  if (
+    !hasTrait(
+      (t) => t.get("type") === "text-content" || t.get("name") === "exacty-label",
+    )
+  ) {
+    component.addTrait(
+      {
+        type: "text-content",
+        name: "exacty-label",
+        label: "Texto",
+        changeProp: true,
+      },
+      { at: 0 },
+    );
+  }
+
+  if (!hasTrait((t) => t.get("name") === "href")) {
+    component.addTrait("href");
+  }
+
+  if (!hasTrait((t) => t.get("name") === "target")) {
+    component.addTrait("target");
+  }
+
+  if (!hasTrait((t) => t.get("type") === "pdf-file" || t.get("name") === "exacty-pdf")) {
+    component.addTrait({
+      type: "pdf-file",
+      name: "exacty-pdf",
+      label: "Documento PDF",
+    });
+  }
 };
 
 const applyPdfToComponent = (
@@ -159,17 +233,8 @@ export const registerPdfDocumentTraits = (editor: Editor) => {
   });
 
   editor.on("component:selected", (component) => {
-    if (!looksLikeDocumentLink(component)) return;
-
-    const traits = component.getTraits();
-    const hasPdfTrait = traits.some((t: { get: (k: string) => string }) => t.get("type") === "pdf-file");
-    if (hasPdfTrait) return;
-
-    component.addTrait({
-      type: "pdf-file",
-      name: "exacty-pdf",
-      label: "Documento PDF",
-    });
+    if (!looksLikeEditableButton(component)) return;
+    ensureEditableButtonTraits(component);
   });
 
   editor.BlockManager.add("exacty-pdf-button", {
@@ -179,6 +244,7 @@ export const registerPdfDocumentTraits = (editor: Editor) => {
     content: {
       type: "link",
       tagName: "a",
+      editable: true,
       attributes: {
         href: "#",
         "data-exacty-pdf": "1",
@@ -187,6 +253,12 @@ export const registerPdfDocumentTraits = (editor: Editor) => {
       },
       content: "Baixar PDF",
       traits: [
+        {
+          type: "text-content",
+          name: "exacty-label",
+          label: "Texto",
+          changeProp: true,
+        },
         "id",
         "title",
         "href",

@@ -4,7 +4,7 @@ import type { AssetController } from "../controllers/asset.controller.js";
 
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 25 * 1024 * 1024 },
+  limits: { fileSize: 60 * 1024 * 1024 }, // 60 MB
 });
 
 export const createAssetRouter = (controller: AssetController) => {

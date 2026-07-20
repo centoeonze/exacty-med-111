@@ -19,7 +19,7 @@ const ALLOWED_MIME = new Set([
   "application/pdf",
 ]);
 
-const MAX_BYTES = 25 * 1024 * 1024; // 25 MB
+const MAX_BYTES = 60 * 1024 * 1024; // 60 MB
 
 export type AssetUploadInput = {
   buffer: Buffer;
