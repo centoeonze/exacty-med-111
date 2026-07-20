@@ -1,8 +1,8 @@
-# Hostinger / Apache / LiteSpeed — raise body limit for CMS PDF uploads (60 MB).
-# Without this, the reverse proxy returns HTML 413 before Express/Multer.
+# Hostinger / Apache / LiteSpeed — max request body 60 MB for CMS PDF uploads.
+# If HTML 413 persists after deploy, the limit is enforced above this file
+# (Hostinger edge / VPS nginx). See server/nginx-hostinger-proxy.conf.
 LimitRequestBody 62914560
 
-# Some Hostinger stacks enforce body size via ModSecurity (ignore if module absent).
 <IfModule mod_security.c>
   SecRequestBodyLimit 62914560
   SecRequestBodyNoFilesLimit 62914560
@@ -12,9 +12,7 @@ LimitRequestBody 62914560
   MaxReqBodySize 62914560
 </IfModule>
 
-# SPA fallback must NOT rewrite /api/* or /uploads/* to index.html.
-# Do NOT force R=404 on /api — that blocks Express uploads (HTML 404 instead of JSON).
-# Pass those paths through so Node / reverse-proxy can handle them.
+# SPA fallback: do not send /api or /uploads to index.html (pass through to Node/API).
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /

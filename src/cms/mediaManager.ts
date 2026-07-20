@@ -45,48 +45,6 @@ const uploadFileViaApi = async (file: File, type: string): Promise<UploadedAsset
   try {
     data = rawText ? JSON.parse(rawText) : {};
   } catch {
-    const contentType = res.headers.get("content-type") || "";
-    const serverHdr = res.headers.get("server") || "";
-    const poweredBy = res.headers.get("x-powered-by") || "";
-    const via = res.headers.get("via") || "";
-    // #region agent log
-    fetch("http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Debug-Session-Id": "387bb7",
-      },
-      body: JSON.stringify({
-        sessionId: "387bb7",
-        runId: "post-404-fix",
-        hypothesisId: "G",
-        location: "mediaManager.ts:uploadFileViaApi:nonJson",
-        message: "upload non-JSON failure",
-        data: {
-          status: res.status,
-          contentType,
-          serverHdr,
-          poweredBy,
-          via,
-          fileSize: file.size,
-          fileSizeMb: Number((file.size / 1024 / 1024).toFixed(2)),
-          bodyPreview: rawText.slice(0, 280),
-          isHtml: /^\s*</.test(rawText) || /text\/html/i.test(contentType),
-        },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-    // #endregion
-    if (res.status === 413) {
-      throw new Error(
-        "Upload rejeitado pelo servidor de hospedagem (HTTP 413): o arquivo excede o limite do proxy (Apache/Nginx/LiteSpeed) antes de chegar à API. No Hostinger VPS, aplique server/nginx-hostinger-proxy.conf (client_max_body_size 60m) e recarregue o Nginx; em plano compartilhado, peça suporte para elevar o limite de request body para 60 MB.",
-      );
-    }
-    if (res.status === 404) {
-      throw new Error(
-        "Upload falhou (HTTP 404): a rota /api/assets/upload não foi encontrada. Verifique se a API Express está no ar e se o .htaccess/Nginx não bloqueia /api.",
-      );
-    }
     throw new Error(
       `Upload failed: servidor retornou HTML em vez de JSON (status ${res.status})`,
     );
