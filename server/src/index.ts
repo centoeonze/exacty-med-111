@@ -11,6 +11,13 @@ const repoRoot = path.resolve(serverRoot, "..");
 dotenv.config({ path: path.join(repoRoot, ".env") });
 dotenv.config({ path: path.join(serverRoot, ".env") });
 
+// Hostinger / missing .env: keep SQLite under server/prisma (stable cwd-independent path).
+if (!process.env.DATABASE_URL || process.env.DATABASE_URL.startsWith("file:./")) {
+  process.env.DATABASE_URL = `file:${path
+    .join(serverRoot, "prisma", "cms.db")
+    .replace(/\\/g, "/")}`;
+}
+
 import { createApp } from "./app.js";
 import { serverConfig } from "./config/env.js";
 import { AuthService } from "./services/AuthService.js";
@@ -26,7 +33,8 @@ const resolveSpaDir = (): string | undefined => {
 };
 
 const serveSpaDir = resolveSpaDir();
-const app = createApp({ serveSpaDir });
+const uploadsDir = path.join(serverRoot, "uploads");
+const app = createApp({ serveSpaDir, uploadsDir });
 
 const bootstrap = async () => {
   try {
@@ -41,9 +49,13 @@ const bootstrap = async () => {
     console.warn("[exacty-cms-api] bootstrap user skipped:", error);
   }
 
-  app.listen(serverConfig.port, () => {
-    console.log(`[exacty-cms-api] listening on http://localhost:${serverConfig.port}`);
+  // 0.0.0.0 — required for Hostinger Node / reverse-proxy to reach the process.
+  app.listen(serverConfig.port, "0.0.0.0", () => {
+    console.log(
+      `[exacty-cms-api] listening on http://0.0.0.0:${serverConfig.port}`,
+    );
     console.log(`[exacty-cms-api] storage backend: sqlite (Prisma)`);
+    console.log(`[exacty-cms-api] uploads dir: ${uploadsDir}`);
     if (serveSpaDir) {
       console.log(`[exacty-cms-api] serving SPA from ${serveSpaDir}`);
     } else {
