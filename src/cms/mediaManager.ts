@@ -31,12 +31,20 @@ const uploadFileViaApi = async (file: File, type: string): Promise<UploadedAsset
   const body = new FormData();
   body.append("file", file, file.name);
   body.append("type", type);
-  const res = await fetch("/api/assets/upload", {
+  const uploadUrl = "/api/assets/upload";
+  // #region agent log
+  fetch('http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d8c2a1'},body:JSON.stringify({sessionId:'d8c2a1',runId:'post-fix',hypothesisId:'C',location:'mediaManager.ts:uploadFileViaApi:entry',message:'upload start',data:{uploadUrl,origin:typeof location!=='undefined'?location.origin:null,pathname:typeof location!=='undefined'?location.pathname:null,fileName:file.name,fileType:file.type,type,storageProvider:typeof __EXACTY_CMS_STORAGE_PROVIDER__!=='undefined'?__EXACTY_CMS_STORAGE_PROVIDER__:null},timestamp:Date.now()})}).catch(()=>{});
+  // #endregion
+  const res = await fetch(uploadUrl, {
     method: "POST",
     credentials: "same-origin",
     body,
   });
   const rawText = await res.text();
+  const contentType = res.headers.get("content-type");
+  // #region agent log
+  fetch('http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d8c2a1'},body:JSON.stringify({sessionId:'d8c2a1',runId:'post-fix',hypothesisId:'A',location:'mediaManager.ts:uploadFileViaApi:response',message:'upload response received',data:{status:res.status,ok:res.ok,contentType,finalUrl:res.url,redirected:res.redirected,bodyPrefix:rawText.slice(0,180),bodyLooksHtml:/^\s*</.test(rawText),bodyLen:rawText.length},timestamp:Date.now()})}).catch(()=>{});
+  // #endregion
   let data = {} as {
     ok?: boolean;
     asset?: { id: string; url: string; name?: string | null };
@@ -45,8 +53,12 @@ const uploadFileViaApi = async (file: File, type: string): Promise<UploadedAsset
   try {
     data = rawText ? JSON.parse(rawText) : {};
   } catch {
+    // #region agent log
+    fetch('http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d8c2a1'},body:JSON.stringify({sessionId:'d8c2a1',runId:'post-fix',hypothesisId:'B',location:'mediaManager.ts:uploadFileViaApi:html-or-nonjson',message:'non-JSON body (likely SPA/proxy miss)',data:{status:res.status,contentType,finalUrl:res.url,bodyPrefix:rawText.slice(0,180)},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
     throw new Error(
-      `Upload failed: servidor retornou HTML em vez de JSON (status ${res.status})`,
+      `Upload failed: API Express indisponível em /api/assets/upload (status ${res.status}). ` +
+        `Suba a API com \`npm run dev:api\` (ou \`npm run dev\`, que inicia Vite + API).`,
     );
   }
   if (!res.ok || !data.asset?.url) {
@@ -55,6 +67,9 @@ const uploadFileViaApi = async (file: File, type: string): Promise<UploadedAsset
   if (data.asset.url.startsWith("data:") || data.asset.url.startsWith("blob:")) {
     throw new Error("Invalid asset URL from API (embedded payloads are not allowed)");
   }
+  // #region agent log
+  fetch('http://127.0.0.1:7404/ingest/d22fde15-2577-4ad4-9d0d-528e758faed8',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'d8c2a1'},body:JSON.stringify({sessionId:'d8c2a1',runId:'post-fix',hypothesisId:'A',location:'mediaManager.ts:uploadFileViaApi:success',message:'upload ok',data:{status:res.status,assetId:data.asset.id,urlPrefix:String(data.asset.url).slice(0,80)},timestamp:Date.now()})}).catch(()=>{});
+  // #endregion
   return {
     type,
     src: data.asset.url,

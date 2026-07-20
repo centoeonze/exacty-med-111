@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "node scripts/dev-stack.mjs",
+    "dev:vite": "vite",
     "dev:api": "npm run dev --prefix server",
     "dev:cms-api": "vite --mode api",
     "dev:staging": "vite --mode staging",
