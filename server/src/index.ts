@@ -49,18 +49,22 @@ const bootstrap = async () => {
     console.warn("[exacty-cms-api] bootstrap user skipped:", error);
   }
 
-  // 0.0.0.0 — required for Hostinger Node / reverse-proxy to reach the process.
+  // 0.0.0.0 — required for EasyPanel / Docker / reverse-proxy.
   app.listen(serverConfig.port, "0.0.0.0", () => {
     console.log(
       `[exacty-cms-api] listening on http://0.0.0.0:${serverConfig.port}`,
     );
+    console.log(`[exacty-cms-api] NODE_ENV=${process.env.NODE_ENV || "undefined"}`);
     console.log(`[exacty-cms-api] storage backend: sqlite (Prisma)`);
     console.log(`[exacty-cms-api] uploads dir: ${uploadsDir}`);
+    console.log(
+      `[exacty-cms-api] routes: GET /api/health, /api/storage, /api/assets, /api/auth, POST /api/assets/upload`,
+    );
     if (serveSpaDir) {
       console.log(`[exacty-cms-api] serving SPA from ${serveSpaDir}`);
     } else {
       console.log(
-        `[exacty-cms-api] SPA not found (no dist/index.html) — API-only mode`,
+        `[exacty-cms-api] SPA not found (no dist/index.html) — API-only mode. Run build:hostinger / Docker build first.`,
       );
     }
   });

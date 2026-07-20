@@ -56,6 +56,13 @@ export const createApp = (options: CreateAppOptions = {}) => {
   app.use("/api/assets", createAssetRouter(assetController));
   app.use("/api/auth", createAuthRouter(authController));
 
+  // Unmatched /api/* → JSON 404 (never fall through to SPA HTML).
+  app.use("/api", (req, res) => {
+    res.status(404).json({
+      error: `No API route for ${req.method} ${req.originalUrl}`,
+    });
+  });
+
   if (options.serveSpaDir) {
     const spaDir = options.serveSpaDir;
     app.use(express.static(spaDir));
