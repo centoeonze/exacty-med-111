@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import dotenv from "dotenv";
@@ -15,7 +16,17 @@ import { serverConfig } from "./config/env.js";
 import { AuthService } from "./services/AuthService.js";
 import { getPrismaClient } from "./repositories/SqliteStorageRepository.js";
 
-const app = createApp();
+/** Prefer repo `dist/` (Vite build); fall back to `server/dist` if present. */
+const resolveSpaDir = (): string | undefined => {
+  const candidates = [path.join(repoRoot, "dist"), path.join(serverRoot, "dist")];
+  for (const dir of candidates) {
+    if (fs.existsSync(path.join(dir, "index.html"))) return dir;
+  }
+  return undefined;
+};
+
+const serveSpaDir = resolveSpaDir();
+const app = createApp({ serveSpaDir });
 
 const bootstrap = async () => {
   try {
@@ -33,6 +44,13 @@ const bootstrap = async () => {
   app.listen(serverConfig.port, () => {
     console.log(`[exacty-cms-api] listening on http://localhost:${serverConfig.port}`);
     console.log(`[exacty-cms-api] storage backend: sqlite (Prisma)`);
+    if (serveSpaDir) {
+      console.log(`[exacty-cms-api] serving SPA from ${serveSpaDir}`);
+    } else {
+      console.log(
+        `[exacty-cms-api] SPA not found (no dist/index.html) — API-only mode`,
+      );
+    }
   });
 };
 

@@ -22,6 +22,8 @@ export type CreateAppOptions = {
   uploadsDir?: string;
   assetService?: AssetService;
   authService?: AuthService;
+  /** When set (Hostinger Node), serve the Vite `dist/` SPA after API routes. */
+  serveSpaDir?: string;
 };
 
 export const createApp = (options: CreateAppOptions = {}) => {
@@ -48,10 +50,25 @@ export const createApp = (options: CreateAppOptions = {}) => {
   app.use(express.json({ limit: "60mb" }));
   app.use("/uploads", express.static(uploadsDir));
 
+  // API routes are always registered (no NODE_ENV / feature-flag gate).
   app.use("/api", createHealthRouter(storageBackend));
   app.use("/api/storage", createStorageRouter(storageController));
   app.use("/api/assets", createAssetRouter(assetController));
   app.use("/api/auth", createAuthRouter(authController));
+
+  if (options.serveSpaDir) {
+    const spaDir = options.serveSpaDir;
+    app.use(express.static(spaDir));
+    app.get("*", (req, res, next) => {
+      if (req.path.startsWith("/api") || req.path.startsWith("/uploads")) {
+        next();
+        return;
+      }
+      res.sendFile(path.join(spaDir, "index.html"), (err) => {
+        if (err) next(err);
+      });
+    });
+  }
 
   const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
     console.error("[exacty-cms-api]", err);

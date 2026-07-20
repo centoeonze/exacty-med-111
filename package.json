@@ -12,6 +12,8 @@
     "seed:kv-from-domain": "npm run seed:kv-from-domain --prefix server",
     "build": "vite build",
     "build:dev": "vite build --mode development",
+    "build:hostinger": "vite build && npm install --prefix server",
+    "start:hostinger": "npm run start --prefix server",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
