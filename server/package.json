@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "start": "tsx src/index.ts",
-    "postinstall": "prisma generate",
+    "postinstall": "prisma generate --schema=prisma/schema.prisma",
     "test": "vitest run",
     "test:watch": "vitest",
     "migrate:local-storage": "tsx src/scripts/migrate-local-storage.ts",
