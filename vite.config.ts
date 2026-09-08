@@ -120,5 +120,31 @@ export default defineConfig(({ mode }) => {
         "@": path.resolve(rootDir, "./src"),
       },
     },
+    build: {
+      target: "es2020",
+      cssCodeSplit: true,
+      sourcemap: false,
+      reportCompressedSize: false,
+      chunkSizeWarningLimit: 1200,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (!id.includes("node_modules")) return;
+            if (id.includes("grapesjs")) return "grapesjs";
+            if (id.includes("framer-motion")) return "motion";
+            if (
+              id.includes("/react/") ||
+              id.includes("/react-dom/") ||
+              id.includes("react-router")
+            ) {
+              return "react-vendor";
+            }
+            if (id.includes("@radix-ui") || id.includes("lucide-react")) {
+              return "ui-vendor";
+            }
+          },
+        },
+      },
+    },
   };
 });
