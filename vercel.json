@@ -21,7 +21,7 @@
       ]
     },
     {
-      "source": "/:file(favicon\.ico|favicon\.png|favicon\.svg|robots\.txt)",
+      "source": "/:file(favicon\\.ico|favicon\\.png|favicon\\.svg|robots\\.txt)",
       "headers": [
         {
           "key": "Cache-Control",
